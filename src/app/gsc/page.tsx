@@ -1,0 +1,128 @@
+import { prisma } from "@/lib/prisma";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatCard } from "@/components/dashboard/stat-card";
+import { GscTable } from "@/components/gsc/gsc-table";
+import { GscChart } from "@/components/gsc/gsc-chart";
+import { formatNumber, formatPercent } from "@/lib/utils";
+import { MousePointerClick, Eye, TrendingUp, Globe } from "lucide-react";
+
+export const dynamic = "force-dynamic";
+
+export default async function GscPage() {
+  const [totals, topQueries, topPages, clicksByDate] = await Promise.all([
+    prisma.gscRow.aggregate({
+      _sum: { clicks: true, impressions: true },
+      _avg: { ctr: true, position: true },
+      _count: { id: true },
+    }),
+    prisma.gscRow.groupBy({
+      by: ["query"],
+      where: { query: { not: null } },
+      _sum: { clicks: true, impressions: true },
+      _avg: { ctr: true, position: true },
+      orderBy: { _sum: { clicks: "desc" } },
+      take: 50,
+    }),
+    prisma.gscRow.groupBy({
+      by: ["page"],
+      where: { page: { not: null } },
+      _sum: { clicks: true, impressions: true },
+      _avg: { ctr: true, position: true },
+      orderBy: { _sum: { clicks: "desc" } },
+      take: 50,
+    }),
+    prisma.gscRow.groupBy({
+      by: ["date"],
+      where: { date: { not: null } },
+      _sum: { clicks: true, impressions: true },
+      _avg: { ctr: true },
+      orderBy: { date: "asc" },
+    }),
+  ]);
+
+  const hasData = totals._count.id > 0;
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Search Console</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          Keyword performance, impressions, CTR, and rankings
+        </p>
+      </div>
+
+      {!hasData && (
+        <div className="rounded-xl border-2 border-dashed border-gray-200 bg-white py-16 text-center">
+          <p className="text-sm text-gray-500">No GSC data yet. Upload a Search Console export to get started.</p>
+        </div>
+      )}
+
+      {hasData && (
+        <>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard title="Total Clicks" value={formatNumber(totals._sum.clicks ?? 0)} icon={MousePointerClick} />
+            <StatCard title="Impressions" value={formatNumber(totals._sum.impressions ?? 0)} icon={Eye} iconColor="text-blue-500" />
+            <StatCard title="Avg. CTR" value={formatPercent(totals._avg.ctr ?? 0)} icon={TrendingUp} iconColor="text-green-500" />
+            <StatCard title="Avg. Position" value={(totals._avg.position ?? 0).toFixed(1)} icon={Globe} iconColor="text-purple-500" />
+          </div>
+
+          {clicksByDate.length > 1 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Clicks &amp; Impressions Over Time</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <GscChart
+                  data={clicksByDate.map((d) => ({
+                    date: d.date ?? "",
+                    clicks: d._sum.clicks ?? 0,
+                    impressions: d._sum.impressions ?? 0,
+                    ctr: (d._avg.ctr ?? 0) * 100,
+                  }))}
+                />
+              </CardContent>
+            </Card>
+          )}
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Top Queries</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <GscTable
+                  rows={topQueries.map((r) => ({
+                    label: r.query ?? "",
+                    clicks: r._sum.clicks ?? 0,
+                    impressions: r._sum.impressions ?? 0,
+                    ctr: r._avg.ctr ?? 0,
+                    position: r._avg.position ?? 0,
+                  }))}
+                  labelHeader="Query"
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Top Pages</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <GscTable
+                  rows={topPages.map((r) => ({
+                    label: r.page ?? "",
+                    clicks: r._sum.clicks ?? 0,
+                    impressions: r._sum.impressions ?? 0,
+                    ctr: r._avg.ctr ?? 0,
+                    position: r._avg.position ?? 0,
+                  }))}
+                  labelHeader="Page"
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

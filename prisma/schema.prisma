@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Upload {
+  id          String   @id @default(cuid())
+  filename    String
+  fileType    String   // "gsc" | "ga4" | "sitemap" | "custom"
+  mimeType    String
+  uploadedAt  DateTime @default(now())
+  rowCount    Int      @default(0)
+  status      String   @default("processing") // "processing" | "ready" | "error"
+  errorMsg    String?
+
+  gscRows     GscRow[]
+  ga4Rows     Ga4Row[]
+  sitemapUrls SitemapUrl[]
+}
+
+model GscRow {
+  id           Int    @id @default(autoincrement())
+  uploadId     String
+  upload       Upload @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  date         String?
+  query        String?
+  page         String?
+  country      String?
+  device       String?
+  clicks       Int    @default(0)
+  impressions  Int    @default(0)
+  ctr          Float  @default(0)
+  position     Float  @default(0)
+}
+
+model Ga4Row {
+  id              Int    @id @default(autoincrement())
+  uploadId        String
+  upload          Upload @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  date            String?
+  pagePath        String?
+  pageTitle       String?
+  sessionSource   String?
+  sessionMedium   String?
+  country         String?
+  deviceCategory  String?
+  sessions        Int    @default(0)
+  users           Int    @default(0)
+  newUsers        Int    @default(0)
+  pageViews       Int    @default(0)
+  bounceRate      Float  @default(0)
+  avgSessionDur   Float  @default(0)
+  conversions     Int    @default(0)
+}
+
+model SitemapUrl {
+  id         Int    @id @default(autoincrement())
+  uploadId   String
+  upload     Upload @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  loc        String
+  lastmod    String?
+  changefreq String?
+  priority   Float?
+}
