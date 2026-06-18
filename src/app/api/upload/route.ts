@@ -48,10 +48,7 @@ function normalizeKey(k: string) {
   return k.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
-function mapRow(
-  raw: Record<string, string>,
-  fieldMap: Record<string, string>
-): Record<string, string> {
+function mapRow(raw: Record<string, string>, fieldMap: Record<string, string>): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [k, v] of Object.entries(raw)) {
     const norm = normalizeKey(k);
@@ -76,7 +73,13 @@ export async function POST(req: NextRequest) {
   try {
     const form = await req.formData();
     const file = form.get("file") as File | null;
+    const projectId = form.get("projectId") as string | null;
+
     if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    if (!projectId) return NextResponse.json({ error: "No project specified" }, { status: 400 });
+
+    const project = await prisma.project.findUnique({ where: { id: projectId } });
+    if (!project) return NextResponse.json({ error: "Project not found" }, { status: 404 });
 
     const buffer = await file.arrayBuffer();
     const ext = file.name.split(".").pop()?.toLowerCase();
@@ -90,6 +93,7 @@ export async function POST(req: NextRequest) {
 
       const upload = await prisma.upload.create({
         data: {
+          projectId,
           filename: file.name,
           fileType: "sitemap",
           mimeType: file.type || "application/xml",
@@ -112,9 +116,7 @@ export async function POST(req: NextRequest) {
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json<Record<string, string>>(ws, { defval: "", raw: false });
 
-    if (!rows.length) {
-      return NextResponse.json({ error: "File is empty" }, { status: 400 });
-    }
+    if (!rows.length) return NextResponse.json({ error: "File is empty" }, { status: 400 });
 
     const headers = Object.keys(rows[0]);
     const fileType = detectType(headers);
@@ -123,6 +125,7 @@ export async function POST(req: NextRequest) {
       const mapped = rows.map((r) => mapRow(r, GSC_FIELD_MAP));
       const upload = await prisma.upload.create({
         data: {
+          projectId,
           filename: file.name,
           fileType: "gsc",
           mimeType: file.type || "application/octet-stream",
@@ -150,6 +153,7 @@ export async function POST(req: NextRequest) {
       const mapped = rows.map((r) => mapRow(r, GA4_FIELD_MAP));
       const upload = await prisma.upload.create({
         data: {
+          projectId,
           filename: file.name,
           fileType: "ga4",
           mimeType: file.type || "application/octet-stream",
@@ -180,6 +184,7 @@ export async function POST(req: NextRequest) {
 
     const upload = await prisma.upload.create({
       data: {
+        projectId,
         filename: file.name,
         fileType: "custom",
         mimeType: file.type || "application/octet-stream",

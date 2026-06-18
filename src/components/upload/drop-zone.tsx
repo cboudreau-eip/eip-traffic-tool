@@ -18,7 +18,7 @@ interface UploadedFile {
 
 const ACCEPTED = [".xlsx", ".xls", ".csv", ".xml", ".tsv"];
 
-export function DropZone() {
+export function DropZone({ projectId }: { projectId: string }) {
   const router = useRouter();
   const [dragging, setDragging] = useState(false);
   const [files, setFiles] = useState<UploadedFile[]>([]);
@@ -30,6 +30,7 @@ export function DropZone() {
         return ACCEPTED.includes(ext);
       });
 
+      const startIdx = files.length;
       const newEntries: UploadedFile[] = valid.map((f) => ({
         name: f.name,
         size: f.size,
@@ -40,11 +41,12 @@ export function DropZone() {
 
       for (let i = 0; i < valid.length; i++) {
         const file = valid[i];
-        const idx = files.length + i;
+        const idx = startIdx + i;
 
         try {
           const form = new FormData();
           form.append("file", file);
+          form.append("projectId", projectId);
           const res = await fetch("/api/upload", { method: "POST", body: form });
           const json = await res.json();
 
@@ -64,7 +66,7 @@ export function DropZone() {
 
       router.refresh();
     },
-    [files.length, router]
+    [files.length, projectId, router]
   );
 
   const onDrop = useCallback(

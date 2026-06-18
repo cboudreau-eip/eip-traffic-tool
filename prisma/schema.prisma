@@ -7,14 +7,26 @@ datasource db {
   provider = "postgresql"
 }
 
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  url         String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  uploads     Upload[]
+}
+
 model Upload {
   id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   filename    String
-  fileType    String   // "gsc" | "ga4" | "sitemap" | "custom"
+  fileType    String
   mimeType    String
   uploadedAt  DateTime @default(now())
   rowCount    Int      @default(0)
-  status      String   @default("processing") // "processing" | "ready" | "error"
+  status      String   @default("processing")
   errorMsg    String?
 
   gscRows     GscRow[]

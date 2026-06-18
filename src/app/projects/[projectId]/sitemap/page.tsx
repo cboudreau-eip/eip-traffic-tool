@@ -1,36 +1,37 @@
+import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/dashboard/stat-card";
-import { Globe, Link2, Calendar, AlertCircle } from "lucide-react";
+import { Globe, Link2, Calendar } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
-export default async function SitemapPage() {
+export default async function SitemapPage({ params }: { params: Promise<{ projectId: string }> }) {
+  const { projectId } = await params;
+  const project = await prisma.project.findUnique({ where: { id: projectId } });
+  if (!project) notFound();
+
+  const where = { upload: { projectId } };
+
   const [count, urls, byChangefreq] = await Promise.all([
-    prisma.sitemapUrl.count(),
-    prisma.sitemapUrl.findMany({ take: 200, orderBy: { priority: "desc" } }),
-    prisma.sitemapUrl.groupBy({
-      by: ["changefreq"],
-      _count: { id: true },
-      orderBy: { _count: { id: "desc" } },
-    }),
+    prisma.sitemapUrl.count({ where }),
+    prisma.sitemapUrl.findMany({ where, take: 200, orderBy: { priority: "desc" } }),
+    prisma.sitemapUrl.groupBy({ by: ["changefreq"], where, _count: { id: true }, orderBy: { _count: { id: "desc" } } }),
   ]);
 
-  const hasData = count > 0;
   const withLastmod = urls.filter((u) => u.lastmod).length;
+  const hasData = count > 0;
 
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Sitemap</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          URL inventory from your uploaded sitemaps
-        </p>
+        <p className="mt-1 text-sm text-gray-500">URL inventory from uploaded sitemaps</p>
       </div>
 
       {!hasData && (
         <div className="rounded-xl border-2 border-dashed border-gray-200 bg-white py-16 text-center">
-          <p className="text-sm text-gray-500">No sitemap data yet. Upload an XML sitemap to get started.</p>
+          <p className="text-sm text-gray-500">No sitemap data yet. Upload an XML sitemap.</p>
         </div>
       )}
 
@@ -44,15 +45,13 @@ export default async function SitemapPage() {
 
           {byChangefreq.length > 0 && (
             <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Change Frequency Distribution</CardTitle>
-              </CardHeader>
+              <CardHeader><CardTitle className="text-base">Change Frequency Distribution</CardTitle></CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-3">
                   {byChangefreq.map((b) => (
                     <div key={b.changefreq ?? "none"} className="rounded-lg border border-gray-100 bg-gray-50 px-4 py-3 text-center">
                       <p className="text-sm font-semibold text-gray-900">{b._count.id}</p>
-                      <p className="text-xs text-gray-500 capitalize">{b.changefreq ?? "unset"}</p>
+                      <p className="text-xs capitalize text-gray-500">{b.changefreq ?? "unset"}</p>
                     </div>
                   ))}
                 </div>

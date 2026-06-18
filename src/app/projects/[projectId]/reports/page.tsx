@@ -1,62 +1,48 @@
+import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatNumber, formatPercent } from "@/lib/utils";
-import { FileText, TrendingUp, Search, Globe } from "lucide-react";
+import { TrendingUp, Search, Globe } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
-export default async function ReportsPage() {
-  const [gscTotals, ga4Totals, topQueries, topPages, sitemapCount, uploadCount] =
-    await Promise.all([
-      prisma.gscRow.aggregate({
-        _sum: { clicks: true, impressions: true },
-        _avg: { ctr: true, position: true },
-        _count: { id: true },
-      }),
-      prisma.ga4Row.aggregate({
-        _sum: { sessions: true, users: true, pageViews: true, conversions: true },
-        _avg: { bounceRate: true, avgSessionDur: true },
-        _count: { id: true },
-      }),
-      prisma.gscRow.groupBy({
-        by: ["query"],
-        where: { query: { not: null } },
-        _sum: { clicks: true, impressions: true },
-        _avg: { ctr: true, position: true },
-        orderBy: { _sum: { clicks: "desc" } },
-        take: 10,
-      }),
-      prisma.gscRow.groupBy({
-        by: ["page"],
-        where: { page: { not: null } },
-        _sum: { clicks: true, impressions: true },
-        orderBy: { _sum: { clicks: "desc" } },
-        take: 10,
-      }),
-      prisma.sitemapUrl.count(),
-      prisma.upload.count(),
-    ]);
+export default async function ReportsPage({ params }: { params: Promise<{ projectId: string }> }) {
+  const { projectId } = await params;
+  const project = await prisma.project.findUnique({ where: { id: projectId } });
+  if (!project) notFound();
 
-  const hasAnyData = gscTotals._count.id > 0 || ga4Totals._count.id > 0;
+  const uploadWhere = { projectId };
+  const gscWhere = { upload: { projectId } };
+  const ga4Where = { upload: { projectId } };
+
+  const [gscTotals, ga4Totals, topQueries, sitemapCount, uploadCount] = await Promise.all([
+    prisma.gscRow.aggregate({ where: gscWhere, _sum: { clicks: true, impressions: true }, _avg: { ctr: true, position: true }, _count: { id: true } }),
+    prisma.ga4Row.aggregate({ where: ga4Where, _sum: { sessions: true, users: true, pageViews: true, conversions: true }, _avg: { bounceRate: true, avgSessionDur: true }, _count: { id: true } }),
+    prisma.gscRow.groupBy({ by: ["query"], where: { ...gscWhere, query: { not: null } }, _sum: { clicks: true, impressions: true }, _avg: { ctr: true, position: true }, orderBy: { _sum: { clicks: "desc" } }, take: 10 }),
+    prisma.sitemapUrl.count({ where: { upload: { projectId } } }),
+    prisma.upload.count({ where: uploadWhere }),
+  ]);
+
+  const hasData = gscTotals._count.id > 0 || ga4Totals._count.id > 0;
 
   return (
     <div className="space-y-8">
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
-          <p className="mt-1 text-sm text-gray-500">Summary report across all your uploaded data</p>
+          <p className="mt-1 text-sm text-gray-500">Summary report for {project.name}</p>
         </div>
         <Badge variant="secondary">{uploadCount} files uploaded</Badge>
       </div>
 
-      {!hasAnyData && (
+      {!hasData && (
         <div className="rounded-xl border-2 border-dashed border-gray-200 bg-white py-16 text-center">
           <p className="text-sm text-gray-500">Upload data first to generate reports.</p>
         </div>
       )}
 
-      {hasAnyData && (
+      {hasData && (
         <div className="space-y-6">
           {gscTotals._count.id > 0 && (
             <Card>
@@ -78,25 +64,16 @@ export default async function ReportsPage() {
                     </div>
                   ))}
                 </div>
-
                 {topQueries.length > 0 && (
                   <div className="mt-6">
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                      Top 10 Queries
-                    </p>
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Top 10 Queries</p>
                     <div className="space-y-2">
                       {topQueries.map((q, i) => (
                         <div key={i} className="flex items-center gap-3">
                           <span className="w-5 shrink-0 text-xs text-gray-400">{i + 1}</span>
-                          <span className="min-w-0 flex-1 truncate text-xs text-gray-700">
-                            {q.query}
-                          </span>
-                          <span className="text-xs font-medium text-gray-900">
-                            {formatNumber(q._sum.clicks ?? 0)} clicks
-                          </span>
-                          <span className="text-xs text-gray-400">
-                            pos {(q._avg.position ?? 0).toFixed(1)}
-                          </span>
+                          <span className="min-w-0 flex-1 truncate text-xs text-gray-700">{q.query}</span>
+                          <span className="text-xs font-medium text-gray-900">{formatNumber(q._sum.clicks ?? 0)} clicks</span>
+                          <span className="text-xs text-gray-400">pos {(q._avg.position ?? 0).toFixed(1)}</span>
                         </div>
                       ))}
                     </div>

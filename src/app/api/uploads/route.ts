@@ -1,8 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const projectId = searchParams.get("projectId");
+  const where = projectId ? { projectId } : {};
+
   const uploads = await prisma.upload.findMany({
+    where,
     orderBy: { uploadedAt: "desc" },
     take: 50,
     select: {
