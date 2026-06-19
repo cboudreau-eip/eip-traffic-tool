@@ -1,9 +1,8 @@
 "use client";
 
 import {
-  ComposedChart,
-  Bar,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -27,49 +26,66 @@ export function GscChart({ data }: { data: GscChartData[] }) {
 
   return (
     <ResponsiveContainer width="100%" height={280}>
-      <ComposedChart data={formatted} margin={{ top: 4, right: 16, bottom: 0, left: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+      <AreaChart data={formatted} margin={{ top: 4, right: 16, bottom: 0, left: 0 }}>
+        <defs>
+          <linearGradient id="clicksGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#1a4480" stopOpacity={0.18} />
+            <stop offset="95%" stopColor="#1a4480" stopOpacity={0.02} />
+          </linearGradient>
+          <linearGradient id="impressionsGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#C9A961" stopOpacity={0.3} />
+            <stop offset="95%" stopColor="#C9A961" stopOpacity={0.03} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid stroke="#eef1f6" vertical={false} />
         <XAxis
           dataKey="date"
-          tick={{ fontSize: 11, fill: "#9ca3af" }}
+          tick={{ fontSize: 11, fill: "#8a96aa" }}
           tickLine={false}
           axisLine={false}
         />
         <YAxis
-          yAxisId="left"
-          tick={{ fontSize: 11, fill: "#9ca3af" }}
+          tick={{ fontSize: 11, fill: "#8a96aa" }}
           tickLine={false}
           axisLine={false}
-        />
-        <YAxis
-          yAxisId="right"
-          orientation="right"
-          tick={{ fontSize: 11, fill: "#9ca3af" }}
-          tickLine={false}
-          axisLine={false}
-          tickFormatter={(v) => `${v.toFixed(1)}%`}
         />
         <Tooltip
-          contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #e5e7eb" }}
+          contentStyle={{
+            fontSize: 12,
+            borderRadius: 8,
+            border: "1px solid #e8edf5",
+            background: "#fff",
+            color: "#0f2f61",
+          }}
           formatter={(value, name) => {
             const v = typeof value === "number" ? value : Number(value);
-            if (name === "CTR %") return [`${v.toFixed(2)}%`, String(name)];
             return [v.toLocaleString(), String(name)];
           }}
         />
-        <Legend iconSize={10} wrapperStyle={{ fontSize: 12 }} />
-        <Bar yAxisId="left" dataKey="clicks" name="Clicks" fill="#f97316" radius={[3, 3, 0, 0]} />
-        <Bar yAxisId="left" dataKey="impressions" name="Impressions" fill="#e5e7eb" radius={[3, 3, 0, 0]} />
-        <Line
-          yAxisId="right"
+        <Legend
+          iconSize={10}
+          iconType="circle"
+          wrapperStyle={{ fontSize: 12, color: "#5d6a80" }}
+        />
+        <Area
           type="monotone"
-          dataKey="ctr"
-          name="CTR %"
-          stroke="#10b981"
+          dataKey="impressions"
+          name="Impressions"
+          stroke="#C9A961"
           strokeWidth={2}
+          fill="url(#impressionsGradient)"
           dot={false}
         />
-      </ComposedChart>
+        <Area
+          type="monotone"
+          dataKey="clicks"
+          name="Clicks"
+          stroke="#1a4480"
+          strokeWidth={2}
+          fill="url(#clicksGradient)"
+          dot={false}
+        />
+      </AreaChart>
     </ResponsiveContainer>
   );
 }

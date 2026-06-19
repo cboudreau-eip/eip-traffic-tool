@@ -10,6 +10,7 @@ interface StatCardProps {
   positive?: boolean;
   icon: LucideIcon;
   iconColor?: string;
+  iconBg?: string;
 }
 
 export function StatCard({
@@ -19,33 +20,48 @@ export function StatCard({
   changeLabel,
   positive,
   icon: Icon,
-  iconColor = "text-orange-500",
+  iconColor = "#C9A961",
+  iconBg = "#faf0d0",
 }: StatCardProps) {
   return (
-    <Card>
-      <CardContent className="p-6">
+    <Card className="border" style={{ borderColor: "#e8edf5", background: "#fff" }}>
+      <CardContent className="p-5">
         <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{title}</p>
-            <p className="text-2xl font-bold text-gray-900">{value}</p>
+          <div className="space-y-1 min-w-0">
+            <p
+              className="text-xs font-semibold uppercase tracking-wider"
+              style={{ color: "#8a96aa" }}
+            >
+              {title}
+            </p>
+            <p className="text-2xl font-bold" style={{ color: "#0f2f61" }}>
+              {value}
+            </p>
             {change && (
-              <p
-                className={cn(
-                  "text-xs font-medium",
-                  positive ? "text-green-600" : "text-red-500"
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={cn(
+                    "inline-flex items-center rounded px-1.5 py-0.5 text-xs font-semibold",
+                    positive
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-600"
+                  )}
+                >
+                  {positive ? "↑" : "↓"} {change}
+                </span>
+                {changeLabel && (
+                  <span className="text-xs" style={{ color: "#8a96aa" }}>
+                    {changeLabel}
+                  </span>
                 )}
-              >
-                {change} {changeLabel}
-              </p>
+              </div>
             )}
           </div>
           <div
-            className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-lg bg-gray-50",
-              iconColor
-            )}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
+            style={{ background: iconBg }}
           >
-            <Icon className="h-5 w-5" />
+            <Icon className="h-5 w-5" style={{ color: iconColor }} />
           </div>
         </div>
       </CardContent>

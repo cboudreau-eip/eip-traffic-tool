@@ -44,8 +44,9 @@ export default async function ProjectDashboard({
     <div className="space-y-8">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
-          <p className="mt-1 text-sm text-gray-500">Traffic overview for this project</p>
+          <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#C9A961" }}>Dashboard</p>
+          <h1 className="mt-1 text-3xl font-bold" style={{ color: "#0f2f61" }}>{project.name}</h1>
+          <p className="mt-1 text-sm" style={{ color: "#5d6a80" }}>Traffic overview for this project</p>
         </div>
         <Button asChild>
           <Link href={`${base}/upload`}>

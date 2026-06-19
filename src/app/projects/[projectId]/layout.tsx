@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   Search,
@@ -13,6 +12,7 @@ import {
   Lightbulb,
   LayoutList,
 } from "lucide-react";
+import { NavLink } from "@/components/layout/nav-link";
 
 const navItems = [
   { href: "", label: "Dashboard", icon: LayoutDashboard },
@@ -41,20 +41,23 @@ export default async function ProjectLayout({
   return (
     <div className="space-y-6">
       {/* Project breadcrumb + sub-nav */}
-      <div className="rounded-xl border border-gray-200 bg-white px-4">
+      <div className="bg-white px-6 shadow-sm rounded-xl border" style={{ borderColor: "#e8edf5" }}>
         {/* Breadcrumb */}
-        <div className="flex items-center gap-1.5 border-b border-gray-100 py-3 text-xs text-gray-500">
-          <Link href="/" className="hover:text-gray-900">Projects</Link>
-          <ChevronRight className="h-3 w-3" />
-          <span className="font-medium text-gray-900">{project.name}</span>
+        <div className="flex items-center gap-1.5 border-b py-3 text-xs" style={{ borderColor: "#eef1f6" }}>
+          <Link href="/" className="hover:text-[#0f2f61]" style={{ color: "#5d6a80" }}>
+            Projects
+          </Link>
+          <ChevronRight className="h-3 w-3" style={{ color: "#b9c2d0" }} />
+          <span className="font-medium" style={{ color: "#0f2f61" }}>{project.name}</span>
           {project.url && (
             <>
-              <ChevronRight className="h-3 w-3" />
+              <ChevronRight className="h-3 w-3" style={{ color: "#b9c2d0" }} />
               <a
                 href={project.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-orange-500 hover:underline"
+                className="hover:underline"
+                style={{ color: "#C9A961" }}
               >
                 {project.url}
               </a>
@@ -62,17 +65,15 @@ export default async function ProjectLayout({
           )}
         </div>
 
-        {/* Sub-nav */}
-        <nav className="flex items-center gap-1 py-2">
+        {/* Sub-nav — underline tab style */}
+        <nav className="flex items-center gap-5 overflow-x-auto pt-1">
           {navItems.map(({ href, label, icon: Icon }) => (
-            <Link
+            <NavLink
               key={href}
               href={`${base}${href}`}
-              className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
-            >
-              <Icon className="h-3.5 w-3.5" />
-              {label}
-            </Link>
+              label={label}
+              icon={Icon}
+            />
           ))}
         </nav>
       </div>
