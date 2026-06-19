@@ -20,10 +20,15 @@ const GSC_FIELD_MAP: Record<string, string> = {
 
 const GA4_FIELD_MAP: Record<string, string> = {
   date: "date",
+  // page path variants
   "page path": "pagePath",
   pagepath: "pagePath",
+  "landing page": "pagePath",
+  landingpage: "pagePath",
+  // page title
   "page title": "pageTitle",
   pagetitle: "pageTitle",
+  // session source/medium
   "session source": "sessionSource",
   sessionsource: "sessionSource",
   "session medium": "sessionMedium",
@@ -31,17 +36,33 @@ const GA4_FIELD_MAP: Record<string, string> = {
   country: "country",
   "device category": "deviceCategory",
   devicecategory: "deviceCategory",
+  // sessions
   sessions: "sessions",
+  // users variants (GA4 exports "Active users")
   users: "users",
+  "active users": "users",
+  activeusers: "users",
+  // new users
   "new users": "newUsers",
   newusers: "newUsers",
+  // page views
   "page views": "pageViews",
   pageviews: "pageViews",
+  views: "pageViews",
+  // bounce rate
   "bounce rate": "bounceRate",
   bouncerate: "bounceRate",
+  // avg session duration variants
   "average session duration": "avgSessionDur",
   averagesessionduration: "avgSessionDur",
+  "average engagement time per session": "avgSessionDur",
+  averageengagementtimepersession: "avgSessionDur",
+  "engagement duration": "avgSessionDur",
+  engagementduration: "avgSessionDur",
+  // conversions (GA4 exports "Key events")
   conversions: "conversions",
+  "key events": "conversions",
+  keyevents: "conversions",
 };
 
 function normalizeKey(k: string) {
@@ -114,11 +135,28 @@ export async function POST(req: NextRequest) {
 
     const wb = XLSX.read(buffer, { type: "array" });
     const ws = wb.Sheets[wb.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json<Record<string, string>>(ws, { defval: "", raw: false });
+
+    // Read as raw arrays so we can skip GA4-style # metadata rows
+    const rawRows = XLSX.utils.sheet_to_json<string[]>(ws, { header: 1, defval: "", raw: false });
+
+    // Find the first row that isn't a # comment (GA4 exports prepend metadata)
+    const headerRowIdx = rawRows.findIndex(
+      (row) => row.length > 0 && !String(row[0]).trim().startsWith("#")
+    );
+    if (headerRowIdx === -1) return NextResponse.json({ error: "File is empty" }, { status: 400 });
+
+    const headers = rawRows[headerRowIdx].map(String);
+    const rows: Record<string, string>[] = rawRows
+      .slice(headerRowIdx + 1)
+      .filter((row) => row.some((cell) => String(cell).trim() !== ""))
+      .map((row) => {
+        const obj: Record<string, string> = {};
+        headers.forEach((h, i) => { obj[h] = String(row[i] ?? ""); });
+        return obj;
+      });
 
     if (!rows.length) return NextResponse.json({ error: "File is empty" }, { status: 400 });
 
-    const headers = Object.keys(rows[0]);
     const fileType = detectType(headers);
 
     if (fileType === "gsc") {
