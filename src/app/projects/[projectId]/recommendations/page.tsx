@@ -10,7 +10,7 @@ import {
   type Recommendation,
 } from "@/lib/recommendations";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatNumber } from "@/lib/utils";
+import { formatNumber, formatPercent } from "@/lib/utils";
 import { TrendingUp, MousePointerClick, Eye, Lightbulb, ArrowUp, AlertCircle, TrendingDown, Target, Activity } from "lucide-react";
 import { RegenerateButton } from "@/components/recommendations/regenerate-button";
 
