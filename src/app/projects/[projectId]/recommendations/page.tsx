@@ -4,12 +4,15 @@ import {
   buildPage2TrapRecs,
   buildLowCtrRecs,
   buildHighCtrLowImpressionsRecs,
+  buildHighBounceRecs,
+  buildLowConversionRecs,
+  buildDecliningTrafficRecs,
   type Recommendation,
 } from "@/lib/recommendations";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatNumber, formatPercent } from "@/lib/utils";
-import { TrendingUp, MousePointerClick, Eye, Lightbulb, ArrowUp, AlertCircle } from "lucide-react";
+import { TrendingUp, MousePointerClick, Eye, Lightbulb, ArrowUp, AlertCircle, TrendingDown, Target, Activity } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +32,9 @@ const TYPE_ICONS = {
   page2_trap: TrendingUp,
   low_ctr: MousePointerClick,
   high_ctr_low_impressions: Eye,
+  high_bounce: Activity,
+  low_conversion: Target,
+  declining_traffic: TrendingDown,
 };
 
 function RecommendationCard({ rec }: { rec: Recommendation }) {
@@ -120,25 +126,39 @@ export default async function RecommendationsPage({
   const project = await prisma.project.findUnique({ where: { id: projectId } });
   if (!project) notFound();
 
-  const gscGroups = await prisma.gscRow.groupBy({
-    by: ["query"],
-    where: { upload: { projectId }, query: { not: null } },
-    _sum: { clicks: true, impressions: true },
-    _avg: { ctr: true, position: true },
-  });
+  const [gscGroups, ga4Groups, ga4DateRows] = await Promise.all([
+    prisma.gscRow.groupBy({
+      by: ["query"],
+      where: { upload: { projectId }, query: { not: null } },
+      _sum: { clicks: true, impressions: true },
+      _avg: { ctr: true, position: true },
+    }),
+    prisma.ga4Row.groupBy({
+      by: ["pagePath"],
+      where: { upload: { projectId }, pagePath: { not: null } },
+      _sum: { sessions: true, pageViews: true, conversions: true },
+      _avg: { bounceRate: true, avgSessionDur: true },
+    }),
+    prisma.ga4Row.groupBy({
+      by: ["pagePath", "date"],
+      where: { upload: { projectId }, pagePath: { not: null }, date: { not: null } },
+      _sum: { sessions: true },
+    }),
+  ]);
 
   const page2Recs = buildPage2TrapRecs(gscGroups);
   const lowCtrRecs = buildLowCtrRecs(gscGroups);
   const highCtrRecs = buildHighCtrLowImpressionsRecs(gscGroups);
+  const highBounceRecs = buildHighBounceRecs(ga4Groups);
+  const lowConvRecs = buildLowConversionRecs(ga4Groups);
+  const decliningRecs = buildDecliningTrafficRecs(ga4DateRows);
 
-  const totalRecs = page2Recs.length + lowCtrRecs.length + highCtrRecs.length;
-  const totalEstimatedGain =
-    [...page2Recs, ...lowCtrRecs, ...highCtrRecs].reduce(
-      (sum, r) => sum + r.metrics.estimatedGain,
-      0
-    );
+  const allRecs = [...page2Recs, ...lowCtrRecs, ...highCtrRecs, ...highBounceRecs, ...lowConvRecs, ...decliningRecs];
+  const totalRecs = allRecs.length;
+  const totalEstimatedGain = allRecs.reduce((sum, r) => sum + r.metrics.estimatedGain, 0);
 
   const hasGscData = gscGroups.length > 0;
+  const hasGa4Data = ga4Groups.length > 0;
 
   return (
     <div className="space-y-8">
@@ -157,19 +177,19 @@ export default async function RecommendationsPage({
         )}
       </div>
 
-      {!hasGscData && (
+      {!hasGscData && !hasGa4Data && (
         <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-white py-20 text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
             <Lightbulb className="h-6 w-6 text-orange-500" />
           </div>
-          <h2 className="mt-4 text-lg font-semibold text-gray-900">No GSC data yet</h2>
+          <h2 className="mt-4 text-lg font-semibold text-gray-900">No data yet</h2>
           <p className="mt-2 max-w-sm text-sm text-gray-500">
-            Upload a Google Search Console export to generate recommendations.
+            Upload a Google Search Console or GA4 export to generate recommendations.
           </p>
         </div>
       )}
 
-      {hasGscData && totalRecs === 0 && (
+      {(hasGscData || hasGa4Data) && totalRecs === 0 && (
         <div className="flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white py-16 text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
             <AlertCircle className="h-6 w-6 text-green-500" />
@@ -181,7 +201,7 @@ export default async function RecommendationsPage({
         </div>
       )}
 
-      {hasGscData && totalRecs > 0 && (
+      {(hasGscData || hasGa4Data) && totalRecs > 0 && (
         <>
           {/* Summary bar */}
           <div className="grid gap-4 sm:grid-cols-3">
@@ -189,6 +209,9 @@ export default async function RecommendationsPage({
               { label: "Page 2 Trap", count: page2Recs.length, gain: page2Recs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-purple-600" },
               { label: "Low CTR Opportunities", count: lowCtrRecs.length, gain: lowCtrRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-orange-600" },
               { label: "Visibility Gaps", count: highCtrRecs.length, gain: highCtrRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-blue-600" },
+              { label: "High Bounce Pages", count: highBounceRecs.length, gain: highBounceRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-red-600" },
+              { label: "Low Conversion Pages", count: lowConvRecs.length, gain: lowConvRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-yellow-600" },
+              { label: "Declining Pages", count: decliningRecs.length, gain: decliningRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-gray-600" },
             ].map((item) => (
               <Card key={item.label}>
                 <CardContent className="p-4">
@@ -200,26 +223,55 @@ export default async function RecommendationsPage({
             ))}
           </div>
 
-          <Section
-            title="Page 2 Trap"
-            description="Queries ranking positions 11–20 with enough impressions to be worth pushing to page 1."
-            recs={page2Recs}
-            emptyMsg="No page 2 opportunities found."
-          />
+          {hasGscData && (
+            <>
+              <Section
+                title="Page 2 Trap"
+                description="Queries ranking positions 11–20 with enough impressions to be worth pushing to page 1."
+                recs={page2Recs}
+                emptyMsg="No page 2 opportunities found."
+              />
 
-          <Section
-            title="Low CTR for Ranking"
-            description="Queries ranking on page 1 but getting fewer clicks than expected — title or meta description needs work."
-            recs={lowCtrRecs}
-            emptyMsg="No low-CTR opportunities found."
-          />
+              <Section
+                title="Low CTR for Ranking"
+                description="Queries ranking on page 1 but getting fewer clicks than expected — title or meta description needs work."
+                recs={lowCtrRecs}
+                emptyMsg="No low-CTR opportunities found."
+              />
 
-          <Section
-            title="High CTR, Low Visibility"
-            description="Content that converts well when people see it — but not enough people are seeing it."
-            recs={highCtrRecs}
-            emptyMsg="No visibility gap opportunities found."
-          />
+              <Section
+                title="High CTR, Low Visibility"
+                description="Content that converts well when people see it — but not enough people are seeing it."
+                recs={highCtrRecs}
+                emptyMsg="No visibility gap opportunities found."
+              />
+            </>
+          )}
+
+          {hasGa4Data && (
+            <>
+              <Section
+                title="High Bounce Rate Pages"
+                description="Pages with significant traffic but visitors leave immediately — content or intent mismatch."
+                recs={highBounceRecs}
+                emptyMsg="No high-bounce pages found."
+              />
+
+              <Section
+                title="Low Conversion Pages"
+                description="Pages getting sessions but failing to convert — missing CTAs or poor conversion path."
+                recs={lowConvRecs}
+                emptyMsg="No low-conversion opportunities found."
+              />
+
+              <Section
+                title="Declining Traffic Pages"
+                description="Pages where sessions dropped more than 20% from the first half to the second half of your date range."
+                recs={decliningRecs}
+                emptyMsg="No significant traffic declines detected."
+              />
+            </>
+          )}
         </>
       )}
     </div>
