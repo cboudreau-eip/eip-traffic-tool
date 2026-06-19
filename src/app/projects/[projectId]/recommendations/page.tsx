@@ -10,9 +10,9 @@ import {
   type Recommendation,
 } from "@/lib/recommendations";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { formatNumber, formatPercent } from "@/lib/utils";
+import { formatNumber } from "@/lib/utils";
 import { TrendingUp, MousePointerClick, Eye, Lightbulb, ArrowUp, AlertCircle, TrendingDown, Target, Activity } from "lucide-react";
+import { RegenerateButton } from "@/components/recommendations/regenerate-button";
 
 export const dynamic = "force-dynamic";
 
@@ -126,7 +126,7 @@ export default async function RecommendationsPage({
   const project = await prisma.project.findUnique({ where: { id: projectId } });
   if (!project) notFound();
 
-  const [gscGroups, ga4Groups, ga4DateRows] = await Promise.all([
+  const [gscGroups, ga4Groups, ga4DateRows, gscTotal, ga4Total] = await Promise.all([
     prisma.gscRow.groupBy({
       by: ["query"],
       where: { upload: { projectId }, query: { not: null } },
@@ -144,6 +144,8 @@ export default async function RecommendationsPage({
       where: { upload: { projectId }, pagePath: { not: null }, date: { not: null } },
       _sum: { sessions: true },
     }),
+    prisma.gscRow.count({ where: { upload: { projectId } } }),
+    prisma.ga4Row.count({ where: { upload: { projectId } } }),
   ]);
 
   const page2Recs = buildPage2TrapRecs(gscGroups);
@@ -159,6 +161,9 @@ export default async function RecommendationsPage({
 
   const hasGscData = gscGroups.length > 0;
   const hasGa4Data = ga4Groups.length > 0;
+  const hasAnyData = gscTotal > 0 || ga4Total > 0;
+  // GSC rows exist but none have a query column — page-level export
+  const gscMissingQuery = gscTotal > 0 && gscGroups.length === 0;
 
   return (
     <div className="space-y-8">
@@ -169,15 +174,18 @@ export default async function RecommendationsPage({
             Actionable SEO opportunities ranked by estimated impact
           </p>
         </div>
-        {totalRecs > 0 && (
-          <div className="text-right">
-            <p className="text-2xl font-bold text-orange-500">+{formatNumber(totalEstimatedGain)}</p>
-            <p className="text-xs text-gray-500">estimated clicks available</p>
-          </div>
-        )}
+        <div className="flex items-center gap-4">
+          {totalRecs > 0 && (
+            <div className="text-right">
+              <p className="text-2xl font-bold text-orange-500">+{formatNumber(totalEstimatedGain)}</p>
+              <p className="text-xs text-gray-500">estimated clicks available</p>
+            </div>
+          )}
+          <RegenerateButton />
+        </div>
       </div>
 
-      {!hasGscData && !hasGa4Data && (
+      {!hasAnyData && (
         <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-white py-20 text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
             <Lightbulb className="h-6 w-6 text-orange-500" />
@@ -185,6 +193,21 @@ export default async function RecommendationsPage({
           <h2 className="mt-4 text-lg font-semibold text-gray-900">No data yet</h2>
           <p className="mt-2 max-w-sm text-sm text-gray-500">
             Upload a Google Search Console or GA4 export to generate recommendations.
+          </p>
+        </div>
+      )}
+
+      {gscMissingQuery && !hasGa4Data && (
+        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-orange-200 bg-orange-50 py-16 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
+            <AlertCircle className="h-6 w-6 text-orange-500" />
+          </div>
+          <h2 className="mt-4 text-base font-semibold text-gray-900">GSC data found, but no query column</h2>
+          <p className="mt-2 max-w-md text-sm text-gray-500">
+            Your Search Console export appears to be a <strong>page-level</strong> report. Recommendations need a <strong>query-level</strong> export.
+          </p>
+          <p className="mt-3 max-w-md text-xs text-gray-400">
+            In Google Search Console → Search Results → make sure <strong>Queries</strong> is selected as the dimension before exporting.
           </p>
         </div>
       )}
