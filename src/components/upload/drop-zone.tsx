@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, FileSpreadsheet, X, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,7 @@ export function DropZone({ projectId }: { projectId: string }) {
   const router = useRouter();
   const [dragging, setDragging] = useState(false);
   const [files, setFiles] = useState<UploadedFile[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const processFiles = useCallback(
     async (incoming: File[]) => {
@@ -108,8 +109,9 @@ export function DropZone({ projectId }: { projectId: string }) {
           </p>
           <p className="mt-1 text-xs text-gray-400">{ACCEPTED.join(", ")}</p>
         </div>
-        <Button size="sm" variant="outline">Browse files</Button>
+        <Button size="sm" variant="outline" onClick={(e) => { e.preventDefault(); inputRef.current?.click(); }}>Browse files</Button>
         <input
+          ref={inputRef}
           type="file"
           multiple
           accept={ACCEPTED.join(",")}
