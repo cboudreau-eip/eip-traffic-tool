@@ -10,10 +10,12 @@ import {
   FileText,
   Upload,
   ChevronRight,
+  Lightbulb,
 } from "lucide-react";
 
 const navItems = [
   { href: "", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/recommendations", label: "Recommendations", icon: Lightbulb },
   { href: "/gsc", label: "Search Console", icon: Search },
   { href: "/ga4", label: "Analytics", icon: BarChart3 },
   { href: "/sitemap", label: "Sitemap", icon: Globe },
