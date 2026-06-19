@@ -11,10 +11,12 @@ import {
   Upload,
   ChevronRight,
   Lightbulb,
+  LayoutList,
 } from "lucide-react";
 
 const navItems = [
   { href: "", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/pages", label: "Pages", icon: LayoutList },
   { href: "/recommendations", label: "Recommendations", icon: Lightbulb },
   { href: "/gsc", label: "Search Console", icon: Search },
   { href: "/ga4", label: "Analytics", icon: BarChart3 },
