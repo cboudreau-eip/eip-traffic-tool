@@ -68,12 +68,9 @@ export default async function ProjectLayout({
         {/* Sub-nav — underline tab style */}
         <nav className="flex items-center gap-5 overflow-x-auto pt-1">
           {navItems.map(({ href, label, icon: Icon }) => (
-            <NavLink
-              key={href}
-              href={`${base}${href}`}
-              label={label}
-              icon={Icon}
-            />
+            <NavLink key={href} href={`${base}${href}`} label={label}>
+              <Icon className="h-3.5 w-3.5 shrink-0" />
+            </NavLink>
           ))}
         </nav>
       </div>
