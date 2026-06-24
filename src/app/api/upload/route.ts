@@ -6,6 +6,8 @@ const GSC_FIELD_MAP: Record<string, string> = {
   query: "query",
   "top queries": "query",
   page: "page",
+  "top pages": "page",
+  toppages: "page",
   "landing page": "page",
   country: "country",
   device: "device",
