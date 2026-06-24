@@ -5,8 +5,10 @@ import { StatCard } from "@/components/dashboard/stat-card";
 import { Ga4Chart } from "@/components/ga4/ga4-chart";
 import { Ga4FullTable } from "@/components/ga4/ga4-full-table";
 import { Ga4Table } from "@/components/ga4/ga4-table";
+import { UploadTrendChart } from "@/components/dashboard/upload-trend-chart";
 import { formatNumber, formatPercent, formatDuration } from "@/lib/utils";
 import { Users, Eye, TrendingUp, Clock, MousePointerClick } from "lucide-react";
+import { format } from "date-fns";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +19,7 @@ export default async function Ga4Page({ params }: { params: Promise<{ projectId:
 
   const where = { upload: { projectId } };
 
-  const [totals, allPages, bySource, byDate] = await Promise.all([
+  const [totals, allPages, bySource, byDate, ga4Uploads, ga4UploadTotals] = await Promise.all([
     prisma.ga4Row.aggregate({
       where,
       _sum: { sessions: true, users: true, newUsers: true, pageViews: true, conversions: true },
@@ -46,6 +48,8 @@ export default async function Ga4Page({ params }: { params: Promise<{ projectId:
       _avg: { bounceRate: true },
       orderBy: { date: "asc" },
     }),
+    prisma.upload.findMany({ where: { projectId, fileType: "ga4" }, orderBy: { uploadedAt: "asc" }, select: { id: true, uploadedAt: true, filename: true } }),
+    prisma.ga4Row.groupBy({ by: ["uploadId"], where, _sum: { sessions: true, users: true } }),
   ]);
 
   const hasData = totals._count.id > 0;
@@ -61,6 +65,14 @@ export default async function Ga4Page({ params }: { params: Promise<{ projectId:
     conversions: r._sum.conversions ?? 0,
   }));
 
+  // Build per-upload trend data
+  const totalsByUploadId = new Map(ga4UploadTotals.map((t) => [t.uploadId, t]));
+  const trendData = ga4Uploads.map((u) => ({
+    label: format(u.uploadedAt, "MMM d ''yy"),
+    sessions: totalsByUploadId.get(u.id)?._sum.sessions ?? 0,
+    users: totalsByUploadId.get(u.id)?._sum.users ?? 0,
+  }));
+
   return (
     <div className="space-y-8">
       {!hasData && (
@@ -74,6 +86,26 @@ export default async function Ga4Page({ params }: { params: Promise<{ projectId:
 
       {hasData && (
         <>
+          {trendData.length > 1 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Performance by Upload</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="mb-3 text-xs" style={{ color: "var(--clr-muted)" }}>
+                  Total sessions and users per export — track how your site&apos;s audience has grown over time.
+                </p>
+                <UploadTrendChart
+                  data={trendData}
+                  bars={[
+                    { key: "sessions", name: "Sessions", color: "#f97316" },
+                    { key: "users",    name: "Users",    color: "#6366f1" },
+                  ]}
+                />
+              </CardContent>
+            </Card>
+          )}
+
           {byDate.length > 1 && (
             <Card>
               <CardHeader>

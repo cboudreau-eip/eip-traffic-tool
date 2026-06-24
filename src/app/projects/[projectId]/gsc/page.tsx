@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { GscTable } from "@/components/gsc/gsc-table";
 import { GscChart } from "@/components/gsc/gsc-chart";
+import { UploadTrendChart } from "@/components/dashboard/upload-trend-chart";
 import { formatNumber, formatPercent } from "@/lib/utils";
 import { MousePointerClick, Eye, TrendingUp, Globe } from "lucide-react";
+import { format } from "date-fns";
 
 export const dynamic = "force-dynamic";
 
@@ -16,14 +18,24 @@ export default async function GscPage({ params }: { params: Promise<{ projectId:
 
   const where = { upload: { projectId } };
 
-  const [totals, topQueries, topPages, clicksByDate] = await Promise.all([
+  const [totals, topQueries, topPages, clicksByDate, gscUploads, gscUploadTotals] = await Promise.all([
     prisma.gscRow.aggregate({ where, _sum: { clicks: true, impressions: true }, _avg: { ctr: true, position: true }, _count: { id: true } }),
     prisma.gscRow.groupBy({ by: ["query"], where: { ...where, query: { not: null } }, _sum: { clicks: true, impressions: true }, _avg: { ctr: true, position: true }, orderBy: { _sum: { clicks: "desc" } }, take: 50 }),
     prisma.gscRow.groupBy({ by: ["page"], where: { ...where, page: { not: null } }, _sum: { clicks: true, impressions: true }, _avg: { ctr: true, position: true }, orderBy: { _sum: { clicks: "desc" } }, take: 50 }),
     prisma.gscRow.groupBy({ by: ["date"], where: { ...where, date: { not: null } }, _sum: { clicks: true, impressions: true }, _avg: { ctr: true }, orderBy: { date: "asc" } }),
+    prisma.upload.findMany({ where: { projectId, fileType: "gsc" }, orderBy: { uploadedAt: "asc" }, select: { id: true, uploadedAt: true, filename: true } }),
+    prisma.gscRow.groupBy({ by: ["uploadId"], where, _sum: { clicks: true, impressions: true } }),
   ]);
 
   const hasData = totals._count.id > 0;
+
+  // Build per-upload trend data
+  const totalsByUploadId = new Map(gscUploadTotals.map((t) => [t.uploadId, t]));
+  const trendData = gscUploads.map((u) => ({
+    label: format(u.uploadedAt, "MMM d ''yy"),
+    clicks: totalsByUploadId.get(u.id)?._sum.clicks ?? 0,
+    impressions: totalsByUploadId.get(u.id)?._sum.impressions ?? 0,
+  }));
 
   return (
     <div className="space-y-8">
@@ -44,6 +56,26 @@ export default async function GscPage({ params }: { params: Promise<{ projectId:
             <StatCard title="Avg. CTR" value={formatPercent(totals._avg.ctr ?? 0)} icon={TrendingUp} iconColor="#22c55e" iconBg="#dcfce7" />
             <StatCard title="Avg. Position" value={(totals._avg.position ?? 0).toFixed(1)} icon={Globe} iconColor="#a855f7" iconBg="#f3e8ff" />
           </div>
+
+          {trendData.length > 1 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Performance by Upload</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="mb-3 text-xs" style={{ color: "var(--clr-muted)" }}>
+                  Total clicks and impressions per export — showing how your site&apos;s search presence has changed over time.
+                </p>
+                <UploadTrendChart
+                  data={trendData}
+                  bars={[
+                    { key: "clicks",      name: "Clicks",      color: "#1a4480" },
+                    { key: "impressions", name: "Impressions",  color: "#C9A961" },
+                  ]}
+                />
+              </CardContent>
+            </Card>
+          )}
 
           {clicksByDate.length > 1 && (
             <Card>
