@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { formatNumber, formatPercent } from "@/lib/utils";
-import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight, Zap, TrendingDown, AlertCircle, RadioTower } from "lucide-react";
 
 export interface CrossRefRow {
   page: string;
@@ -18,7 +18,8 @@ export interface CrossRefRow {
 }
 
 type SortKey = "page" | "clicks" | "impressions" | "ctr" | "position" | "sessions" | "users" | "bounceRate";
-type Coverage = "all" | "both" | "gsc_only" | "ga4_only";
+type Coverage = "all" | "both" | "gsc_only" | "ga4_only" | "opportunities";
+type FlagKey = "quick_win" | "ctr_gap" | "bounce" | "not_tracked";
 
 interface Column {
   key: SortKey;
@@ -27,15 +28,31 @@ interface Column {
   source: "page" | "gsc" | "ga4";
 }
 
+interface FlagConfig {
+  label: string;
+  description: string;
+  bg: string;
+  color: string;
+  icon: React.ElementType;
+  iconColor: string;
+}
+
+const FLAGS: Record<FlagKey, FlagConfig> = {
+  quick_win:   { label: "Quick win",   description: "Ranking on page 1 but CTR < 2% — title or meta description could be stronger", bg: "#dcfce7", color: "#15803d", icon: Zap,          iconColor: "#16a34a" },
+  ctr_gap:     { label: "CTR gap",     description: "High impressions but very few clicks — low search visibility despite exposure",  bg: "#fef9c3", color: "#92400e", icon: TrendingDown,  iconColor: "#ca8a04" },
+  bounce:      { label: "Bounce",      description: "Most visitors leave immediately — content may not match search intent",          bg: "#fee2e2", color: "#b91c1c", icon: AlertCircle,   iconColor: "#dc2626" },
+  not_tracked: { label: "Not tracked", description: "Getting search clicks but no GA4 data — possible analytics tracking gap",       bg: "#ede9fe", color: "#6b21a8", icon: RadioTower,    iconColor: "#7c3aed" },
+};
+
 const COLUMNS: Column[] = [
-  { key: "page",       label: "Page",        numeric: false, source: "page" },
-  { key: "clicks",     label: "Clicks",      numeric: true,  source: "gsc"  },
-  { key: "impressions",label: "Impressions", numeric: true,  source: "gsc"  },
-  { key: "ctr",        label: "CTR",         numeric: true,  source: "gsc"  },
-  { key: "position",   label: "Position",    numeric: true,  source: "gsc"  },
-  { key: "sessions",   label: "Sessions",    numeric: true,  source: "ga4"  },
-  { key: "users",      label: "Users",       numeric: true,  source: "ga4"  },
-  { key: "bounceRate", label: "Bounce",      numeric: true,  source: "ga4"  },
+  { key: "page",        label: "Page",        numeric: false, source: "page" },
+  { key: "clicks",      label: "Clicks",      numeric: true,  source: "gsc"  },
+  { key: "impressions", label: "Impressions", numeric: true,  source: "gsc"  },
+  { key: "ctr",         label: "CTR",         numeric: true,  source: "gsc"  },
+  { key: "position",    label: "Position",    numeric: true,  source: "gsc"  },
+  { key: "sessions",    label: "Sessions",    numeric: true,  source: "ga4"  },
+  { key: "users",       label: "Users",       numeric: true,  source: "ga4"  },
+  { key: "bounceRate",  label: "Bounce",      numeric: true,  source: "ga4"  },
 ];
 
 const SOURCE_COLORS: Record<string, string> = {
@@ -45,12 +62,37 @@ const SOURCE_COLORS: Record<string, string> = {
 
 const PAGE_SIZE = 25;
 
+function getFlag(row: CrossRefRow): FlagKey | null {
+  if (row.hasGsc && row.position > 0 && row.position <= 10 && row.impressions >= 500 && row.ctr < 0.02)
+    return "quick_win";
+  if (row.hasGsc && row.impressions >= 1000 && row.ctr < 0.01)
+    return "ctr_gap";
+  if (row.hasGa4 && row.sessions >= 50 && row.bounceRate > 0.7)
+    return "bounce";
+  if (row.hasGsc && !row.hasGa4 && row.clicks >= 10)
+    return "not_tracked";
+  return null;
+}
+
 function CoverageChip({ hasGsc, hasGa4 }: { hasGsc: boolean; hasGa4: boolean }) {
   if (hasGsc && hasGa4)
     return <span className="inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium bg-green-100 text-green-700">Both</span>;
   if (hasGsc)
     return <span className="inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-700">GSC</span>;
   return <span className="inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium bg-orange-100 text-orange-700">GA4</span>;
+}
+
+function FlagChip({ flagKey }: { flagKey: FlagKey }) {
+  const f = FLAGS[flagKey];
+  return (
+    <span
+      className="inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium"
+      style={{ background: f.bg, color: f.color }}
+      title={f.description}
+    >
+      {f.label}
+    </span>
+  );
 }
 
 export function CrossRefTable({ rows }: { rows: CrossRefRow[] }) {
@@ -70,11 +112,23 @@ export function CrossRefTable({ rows }: { rows: CrossRefRow[] }) {
     setPage(1);
   }
 
+  const flagCounts = useMemo(() => {
+    const counts: Record<FlagKey, number> = { quick_win: 0, ctr_gap: 0, bounce: 0, not_tracked: 0 };
+    for (const row of rows) {
+      const f = getFlag(row);
+      if (f) counts[f]++;
+    }
+    return counts;
+  }, [rows]);
+
+  const opportunityCount = useMemo(() => rows.filter((r) => getFlag(r) !== null).length, [rows]);
+
   const filtered = useMemo(() => {
     let result = rows;
-    if (coverage === "both")    result = result.filter((r) => r.hasGsc && r.hasGa4);
-    if (coverage === "gsc_only") result = result.filter((r) => r.hasGsc && !r.hasGa4);
-    if (coverage === "ga4_only") result = result.filter((r) => !r.hasGsc && r.hasGa4);
+    if (coverage === "both")         result = result.filter((r) => r.hasGsc && r.hasGa4);
+    if (coverage === "gsc_only")     result = result.filter((r) => r.hasGsc && !r.hasGa4);
+    if (coverage === "ga4_only")     result = result.filter((r) => !r.hasGsc && r.hasGa4);
+    if (coverage === "opportunities") result = result.filter((r) => getFlag(r) !== null);
     const q = filter.toLowerCase();
     if (q) result = result.filter((r) => r.page.toLowerCase().includes(q));
     return result;
@@ -97,9 +151,9 @@ export function CrossRefTable({ rows }: { rows: CrossRefRow[] }) {
   const startRow   = sorted.length === 0 ? 0 : (safePage - 1) * PAGE_SIZE + 1;
   const endRow     = Math.min(safePage * PAGE_SIZE, sorted.length);
 
-  const bothCount   = rows.filter((r) => r.hasGsc && r.hasGa4).length;
-  const gscCount    = rows.filter((r) => r.hasGsc && !r.hasGa4).length;
-  const ga4Count    = rows.filter((r) => !r.hasGsc && r.hasGa4).length;
+  const bothCount = rows.filter((r) => r.hasGsc && r.hasGa4).length;
+  const gscCount  = rows.filter((r) => r.hasGsc && !r.hasGa4).length;
+  const ga4Count  = rows.filter((r) => !r.hasGsc && r.hasGa4).length;
 
   if (!rows.length) {
     return (
@@ -110,16 +164,48 @@ export function CrossRefTable({ rows }: { rows: CrossRefRow[] }) {
   }
 
   return (
-    <div className="space-y-3">
-      {/* Coverage summary pills */}
+    <div className="space-y-4">
+      {/* Opportunity summary cards */}
+      {opportunityCount > 0 && (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {(Object.keys(FLAGS) as FlagKey[]).map((key) => {
+            const f = FLAGS[key];
+            const Icon = f.icon;
+            const count = flagCounts[key];
+            return (
+              <button
+                key={key}
+                onClick={() => { setCoverage("opportunities"); setPage(1); }}
+                disabled={count === 0}
+                className="flex items-start gap-3 rounded-xl border p-3 text-left transition-colors disabled:opacity-40"
+                style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
+                onMouseEnter={(e) => { if (count > 0) e.currentTarget.style.background = "var(--clr-surface-2)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "var(--clr-surface)"; }}
+                title={f.description}
+              >
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg" style={{ background: f.bg }}>
+                  <Icon className="h-3.5 w-3.5" style={{ color: f.iconColor }} />
+                </span>
+                <div>
+                  <p className="text-lg font-bold leading-none" style={{ color: "var(--clr-primary)" }}>{count}</p>
+                  <p className="mt-0.5 text-xs" style={{ color: "var(--clr-muted)" }}>{f.label}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Filter pills */}
       <div className="flex flex-wrap items-center gap-2">
         {(
           [
-            { key: "all",      label: `All (${rows.length})` },
-            { key: "both",     label: `Both (${bothCount})`,     color: "bg-green-100 text-green-700"  },
-            { key: "gsc_only", label: `GSC only (${gscCount})`,  color: "bg-blue-100 text-blue-700"    },
-            { key: "ga4_only", label: `GA4 only (${ga4Count})`,  color: "bg-orange-100 text-orange-700"},
-          ] as Array<{ key: Coverage; label: string; color?: string }>
+            { key: "all",           label: `All (${rows.length})` },
+            { key: "opportunities", label: `Opportunities (${opportunityCount})` },
+            { key: "both",          label: `Both (${bothCount})` },
+            { key: "gsc_only",      label: `GSC only (${gscCount})` },
+            { key: "ga4_only",      label: `GA4 only (${ga4Count})` },
+          ] as Array<{ key: Coverage; label: string }>
         ).map((opt) => (
           <button
             key={opt.key}
@@ -155,6 +241,9 @@ export function CrossRefTable({ rows }: { rows: CrossRefRow[] }) {
               <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--clr-muted)" }}>
                 Coverage
               </th>
+              <th className="px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--clr-muted)" }}>
+                Flag
+              </th>
               {COLUMNS.map(({ key, label, numeric, source }) => {
                 const active = sortKey === key;
                 return (
@@ -175,10 +264,7 @@ export function CrossRefTable({ rows }: { rows: CrossRefRow[] }) {
                       style={{ justifyContent: numeric ? "flex-end" : "flex-start" }}
                     >
                       {source !== "page" && (
-                        <span
-                          className="inline-block h-1.5 w-1.5 rounded-full"
-                          style={{ background: SOURCE_COLORS[source] }}
-                        />
+                        <span className="inline-block h-1.5 w-1.5 rounded-full" style={{ background: SOURCE_COLORS[source] }} />
                       )}
                       {label}
                       {active ? (
@@ -195,49 +281,55 @@ export function CrossRefTable({ rows }: { rows: CrossRefRow[] }) {
             </tr>
           </thead>
           <tbody>
-            {pageRows.map((row, i) => (
-              <tr
-                key={row.page + i}
-                className="group transition-colors"
-                style={{ borderBottom: "1px solid var(--clr-border-2)" }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--clr-surface-2)")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "")}
-              >
-                <td className="px-4 py-2.5">
-                  <CoverageChip hasGsc={row.hasGsc} hasGa4={row.hasGa4} />
-                </td>
-                <td
-                  className="max-w-[260px] truncate px-4 py-2.5 text-xs font-medium font-mono transition-colors group-hover:text-[var(--clr-gold)]"
-                  style={{ color: "var(--clr-primary)" }}
-                  title={row.page}
+            {pageRows.map((row, i) => {
+              const flag = getFlag(row);
+              return (
+                <tr
+                  key={row.page + i}
+                  className="group transition-colors"
+                  style={{ borderBottom: "1px solid var(--clr-border-2)" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--clr-surface-2)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "")}
                 >
-                  {row.page}
-                </td>
-                {/* GSC metrics */}
-                <td className="px-4 py-2.5 text-right text-xs font-semibold" style={{ color: row.hasGsc ? "var(--clr-primary)"   : "var(--clr-border)" }}>
-                  {row.hasGsc ? formatNumber(row.clicks) : "—"}
-                </td>
-                <td className="px-4 py-2.5 text-right text-xs" style={{ color: row.hasGsc ? "var(--clr-secondary)" : "var(--clr-border)" }}>
-                  {row.hasGsc ? formatNumber(row.impressions) : "—"}
-                </td>
-                <td className="px-4 py-2.5 text-right text-xs" style={{ color: row.hasGsc ? "var(--clr-secondary)" : "var(--clr-border)" }}>
-                  {row.hasGsc ? formatPercent(row.ctr) : "—"}
-                </td>
-                <td className="px-4 py-2.5 text-right text-xs" style={{ color: row.hasGsc ? "var(--clr-secondary)" : "var(--clr-border)" }}>
-                  {row.hasGsc ? row.position.toFixed(1) : "—"}
-                </td>
-                {/* GA4 metrics */}
-                <td className="px-4 py-2.5 text-right text-xs font-semibold" style={{ color: row.hasGa4 ? "var(--clr-primary)"   : "var(--clr-border)" }}>
-                  {row.hasGa4 ? formatNumber(row.sessions) : "—"}
-                </td>
-                <td className="px-4 py-2.5 text-right text-xs" style={{ color: row.hasGa4 ? "var(--clr-secondary)" : "var(--clr-border)" }}>
-                  {row.hasGa4 ? formatNumber(row.users) : "—"}
-                </td>
-                <td className="px-4 py-2.5 text-right text-xs" style={{ color: row.hasGa4 ? "var(--clr-secondary)" : "var(--clr-border)" }}>
-                  {row.hasGa4 ? formatPercent(row.bounceRate) : "—"}
-                </td>
-              </tr>
-            ))}
+                  <td className="px-4 py-2.5">
+                    <CoverageChip hasGsc={row.hasGsc} hasGa4={row.hasGa4} />
+                  </td>
+                  <td className="px-4 py-2.5">
+                    {flag ? <FlagChip flagKey={flag} /> : <span className="text-xs" style={{ color: "var(--clr-border)" }}>—</span>}
+                  </td>
+                  <td
+                    className="max-w-[240px] truncate px-4 py-2.5 text-xs font-medium font-mono transition-colors group-hover:text-[var(--clr-gold)]"
+                    style={{ color: "var(--clr-primary)" }}
+                    title={row.page}
+                  >
+                    {row.page}
+                  </td>
+                  {/* GSC metrics */}
+                  <td className="px-4 py-2.5 text-right text-xs font-semibold" style={{ color: row.hasGsc ? "var(--clr-primary)"   : "var(--clr-border)" }}>
+                    {row.hasGsc ? formatNumber(row.clicks) : "—"}
+                  </td>
+                  <td className="px-4 py-2.5 text-right text-xs" style={{ color: row.hasGsc ? "var(--clr-secondary)" : "var(--clr-border)" }}>
+                    {row.hasGsc ? formatNumber(row.impressions) : "—"}
+                  </td>
+                  <td className="px-4 py-2.5 text-right text-xs" style={{ color: row.hasGsc ? "var(--clr-secondary)" : "var(--clr-border)" }}>
+                    {row.hasGsc ? formatPercent(row.ctr) : "—"}
+                  </td>
+                  <td className="px-4 py-2.5 text-right text-xs" style={{ color: row.hasGsc ? "var(--clr-secondary)" : "var(--clr-border)" }}>
+                    {row.hasGsc ? row.position.toFixed(1) : "—"}
+                  </td>
+                  {/* GA4 metrics */}
+                  <td className="px-4 py-2.5 text-right text-xs font-semibold" style={{ color: row.hasGa4 ? "var(--clr-primary)"   : "var(--clr-border)" }}>
+                    {row.hasGa4 ? formatNumber(row.sessions) : "—"}
+                  </td>
+                  <td className="px-4 py-2.5 text-right text-xs" style={{ color: row.hasGa4 ? "var(--clr-secondary)" : "var(--clr-border)" }}>
+                    {row.hasGa4 ? formatNumber(row.users) : "—"}
+                  </td>
+                  <td className="px-4 py-2.5 text-right text-xs" style={{ color: row.hasGa4 ? "var(--clr-secondary)" : "var(--clr-border)" }}>
+                    {row.hasGa4 ? formatPercent(row.bounceRate) : "—"}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 
@@ -311,12 +403,24 @@ export function CrossRefTable({ rows }: { rows: CrossRefRow[] }) {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-4 text-xs" style={{ color: "var(--clr-muted)" }}>
+      <div className="flex flex-wrap items-center gap-4 text-xs" style={{ color: "var(--clr-muted)" }}>
         <span className="flex items-center gap-1.5">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#1a4480]" /> GSC = Search Console data
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#1a4480]" /> GSC = Search Console
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#f97316]" /> GA4 = Analytics data
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#f97316]" /> GA4 = Analytics
+        </span>
+        <span className="flex items-center gap-1.5" title="Position 1–10, CTR &lt; 2%">
+          <Zap className="h-3 w-3 text-green-600" /> Quick win: page 1 ranking, low CTR
+        </span>
+        <span className="flex items-center gap-1.5" title="Impressions ≥ 1000, CTR &lt; 1%">
+          <TrendingDown className="h-3 w-3 text-yellow-600" /> CTR gap: high exposure, few clicks
+        </span>
+        <span className="flex items-center gap-1.5" title="Sessions ≥ 50, bounce &gt; 70%">
+          <AlertCircle className="h-3 w-3 text-red-600" /> Bounce: high exit rate
+        </span>
+        <span className="flex items-center gap-1.5" title="GSC clicks ≥ 10, no GA4 data">
+          <RadioTower className="h-3 w-3 text-purple-600" /> Not tracked: clicks without analytics
         </span>
       </div>
     </div>
