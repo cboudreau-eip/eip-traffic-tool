@@ -167,20 +167,14 @@ export default async function RecommendationsPage({
 
   return (
     <div className="space-y-8">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Recommendations</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Actionable SEO opportunities ranked by estimated impact
+      <div className="flex items-center justify-between">
+        {totalRecs > 0 && (
+          <p className="text-sm" style={{ color: "#5d6a80" }}>
+            <span className="font-bold text-orange-500">+{formatNumber(totalEstimatedGain)}</span>
+            {" "}estimated clicks available
           </p>
-        </div>
-        <div className="flex items-center gap-4">
-          {totalRecs > 0 && (
-            <div className="text-right">
-              <p className="text-2xl font-bold text-orange-500">+{formatNumber(totalEstimatedGain)}</p>
-              <p className="text-xs text-gray-500">estimated clicks available</p>
-            </div>
-          )}
+        )}
+        <div className="ml-auto">
           <RegenerateButton />
         </div>
       </div>

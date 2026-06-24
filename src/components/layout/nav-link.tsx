@@ -20,7 +20,7 @@ export function NavLink({
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-1.5 border-b-2 px-1 pb-2.5 pt-1 text-sm transition-colors whitespace-nowrap",
+        "flex items-center gap-1.5 border-b-2 px-2.5 py-2.5 text-xs transition-colors whitespace-nowrap",
         active
           ? "border-[#0f2f61] font-semibold text-[#0f2f61]"
           : "border-transparent font-medium text-[#5d6a80] hover:border-[#c5d0e6] hover:text-[#0f2f61]"

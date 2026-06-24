@@ -27,12 +27,6 @@ export default async function GscPage({ params }: { params: Promise<{ projectId:
 
   return (
     <div className="space-y-8">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#C9A961" }}>Search Console</p>
-        <h1 className="mt-1 text-3xl font-bold" style={{ color: "#0f2f61" }}>Keyword performance</h1>
-        <p className="mt-1 text-sm" style={{ color: "#5d6a80" }}>Impressions, clicks, CTR, and average position for {project.url ?? project.name}</p>
-      </div>
-
       {!hasData && (
         <div className="rounded-xl border-2 border-dashed border-gray-200 bg-white py-16 text-center">
           <p className="text-sm text-gray-500">No GSC data yet. Upload a Search Console export.</p>

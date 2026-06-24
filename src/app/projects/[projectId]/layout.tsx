@@ -39,40 +39,43 @@ export default async function ProjectLayout({
   const base = `/projects/${projectId}`;
 
   return (
-    <div className="space-y-6">
-      {/* Project breadcrumb + sub-nav */}
-      <div className="bg-white px-6 shadow-sm rounded-xl border" style={{ borderColor: "#e8edf5" }}>
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-1.5 border-b py-3 text-xs" style={{ borderColor: "#eef1f6" }}>
-          <Link href="/" className="hover:text-[#0f2f61]" style={{ color: "#5d6a80" }}>
-            Projects
-          </Link>
-          <ChevronRight className="h-3 w-3" style={{ color: "#b9c2d0" }} />
-          <span className="font-medium" style={{ color: "#0f2f61" }}>{project.name}</span>
-          {project.url && (
-            <>
-              <ChevronRight className="h-3 w-3" style={{ color: "#b9c2d0" }} />
+    <div className="space-y-5">
+      {/* Single-row: breadcrumb + divider + tabs */}
+      <div className="bg-white px-5 shadow-sm rounded-xl border" style={{ borderColor: "#e8edf5" }}>
+        <div className="flex items-center gap-3 overflow-x-auto">
+          {/* Compact breadcrumb */}
+          <div className="flex shrink-0 items-center gap-1.5 text-xs">
+            <Link href="/" className="hover:text-[#0f2f61]" style={{ color: "#8a96aa" }}>
+              Projects
+            </Link>
+            <ChevronRight className="h-3 w-3" style={{ color: "#b9c2d0" }} />
+            {project.url ? (
               <a
                 href={project.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:underline"
-                style={{ color: "#C9A961" }}
+                className="font-semibold hover:underline"
+                style={{ color: "#0f2f61" }}
               >
-                {project.url}
+                {project.name}
               </a>
-            </>
-          )}
-        </div>
+            ) : (
+              <span className="font-semibold" style={{ color: "#0f2f61" }}>{project.name}</span>
+            )}
+          </div>
 
-        {/* Sub-nav — underline tab style */}
-        <nav className="flex items-center gap-5 overflow-x-auto pt-1">
-          {navItems.map(({ href, label, icon: Icon }) => (
-            <NavLink key={href} href={`${base}${href}`} label={label}>
-              <Icon className="h-3.5 w-3.5 shrink-0" />
-            </NavLink>
-          ))}
-        </nav>
+          {/* Vertical divider */}
+          <div className="h-4 w-px shrink-0" style={{ background: "#d8e0ed" }} />
+
+          {/* Tabs */}
+          <nav className="flex items-center overflow-x-auto">
+            {navItems.map(({ href, label, icon: Icon }) => (
+              <NavLink key={href} href={`${base}${href}`} label={label}>
+                <Icon className="h-3.5 w-3.5 shrink-0" />
+              </NavLink>
+            ))}
+          </nav>
+        </div>
       </div>
 
       {children}

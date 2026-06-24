@@ -133,35 +133,28 @@ export default async function PagesPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Pages</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            {previous ? (
-              <>
-                Comparing <span className="font-medium text-gray-700">{current.filename}</span>{" "}
-                vs <span className="font-medium text-gray-700">{previous.filename}</span>
-                {newCount > 0 && (
-                  <span className="ml-2 inline-flex items-center rounded bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">
-                    {newCount} new
-                  </span>
-                )}
-              </>
-            ) : (
-              <>
-                {current.filename} · {format(new Date(current.uploadedAt), "MMM d, yyyy")} ·{" "}
-                <span className="text-orange-500">Upload again next week to see changes</span>
-              </>
-            )}
-          </p>
-        </div>
-        <div className="text-right text-xs text-gray-400">
-          <p>{rows.length} pages</p>
-          {previous && (
-            <p className="mt-0.5">
-              Last upload {format(new Date(current.uploadedAt), "MMM d, yyyy")}
-            </p>
+      <div className="flex items-center justify-between text-xs" style={{ color: "#5d6a80" }}>
+        <p>
+          {previous ? (
+            <>
+              Comparing <span className="font-medium" style={{ color: "#0f2f61" }}>{current.filename}</span>{" "}
+              vs <span className="font-medium" style={{ color: "#0f2f61" }}>{previous.filename}</span>
+              {newCount > 0 && (
+                <span className="ml-2 inline-flex items-center rounded bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">
+                  {newCount} new
+                </span>
+              )}
+            </>
+          ) : (
+            <>
+              {current.filename} · {format(new Date(current.uploadedAt), "MMM d, yyyy")} ·{" "}
+              <span className="text-orange-500">Upload again next week to see changes</span>
+            </>
           )}
+        </p>
+        <div className="text-right">
+          <p>{rows.length} pages</p>
+          {previous && <p className="mt-0.5">Last upload {format(new Date(current.uploadedAt), "MMM d, yyyy")}</p>}
         </div>
       </div>
 

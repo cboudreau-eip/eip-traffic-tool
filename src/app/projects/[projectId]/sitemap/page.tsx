@@ -24,11 +24,6 @@ export default async function SitemapPage({ params }: { params: Promise<{ projec
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Sitemap</h1>
-        <p className="mt-1 text-sm text-gray-500">URL inventory from uploaded sitemaps</p>
-      </div>
-
       {!hasData && (
         <div className="rounded-xl border-2 border-dashed border-gray-200 bg-white py-16 text-center">
           <p className="text-sm text-gray-500">No sitemap data yet. Upload an XML sitemap.</p>

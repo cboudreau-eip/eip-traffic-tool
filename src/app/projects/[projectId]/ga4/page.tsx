@@ -63,14 +63,6 @@ export default async function Ga4Page({ params }: { params: Promise<{ projectId:
 
   return (
     <div className="space-y-8">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: "#C9A961" }}>Analytics</p>
-        <h1 className="mt-1 text-3xl font-bold" style={{ color: "#0f2f61" }}>GA4 Traffic Data</h1>
-        <p className="mt-1 text-sm" style={{ color: "#5d6a80" }}>
-          Sessions, users, page views, and conversions for {project.url ?? project.name}
-        </p>
-      </div>
-
       {!hasData && (
         <div className="rounded-xl border-2 border-dashed border-gray-200 bg-white py-16 text-center">
           <p className="text-sm text-gray-500">No GA4 data yet. Upload a GA4 export.</p>
