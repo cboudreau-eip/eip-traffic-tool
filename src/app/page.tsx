@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Globe, Plus, FileSpreadsheet, ArrowRight } from "lucide-react";
+import { Globe, FileSpreadsheet, ArrowRight } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { NewProjectButton } from "@/components/projects/new-project-button";
 
@@ -18,8 +17,8 @@ export default async function HomePage() {
     <div className="space-y-8">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold" style={{ color: "var(--clr-primary)" }}>Projects</h1>
+          <p className="mt-1 text-sm" style={{ color: "var(--clr-muted)" }}>
             Select a project to view its traffic data
           </p>
         </div>
@@ -27,12 +26,15 @@ export default async function HomePage() {
       </div>
 
       {projects.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-white py-20 text-center">
+        <div
+          className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-20 text-center"
+          style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
+        >
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
             <Globe className="h-6 w-6 text-orange-500" />
           </div>
-          <h2 className="mt-4 text-lg font-semibold text-gray-900">No projects yet</h2>
-          <p className="mt-2 max-w-sm text-sm text-gray-500">
+          <h2 className="mt-4 text-lg font-semibold" style={{ color: "var(--clr-primary)" }}>No projects yet</h2>
+          <p className="mt-2 max-w-sm text-sm" style={{ color: "var(--clr-muted)" }}>
             Create a project for each website you want to track.
           </p>
           <NewProjectButton className="mt-6" />
@@ -49,24 +51,24 @@ export default async function HomePage() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-50">
                       <Globe className="h-5 w-5 text-orange-500" />
                     </div>
-                    <ArrowRight className="h-4 w-4 text-gray-300 transition-colors group-hover:text-orange-500" />
+                    <ArrowRight className="h-4 w-4 transition-colors group-hover:text-orange-500" style={{ color: "var(--clr-border)" }} />
                   </div>
                   <div className="mt-4">
-                    <h3 className="font-semibold text-gray-900">{p.name}</h3>
+                    <h3 className="font-semibold" style={{ color: "var(--clr-primary)" }}>{p.name}</h3>
                     {p.url && (
-                      <p className="mt-0.5 truncate text-xs text-gray-400">{p.url}</p>
+                      <p className="mt-0.5 truncate text-xs" style={{ color: "var(--clr-muted)" }}>{p.url}</p>
                     )}
                     {p.description && (
-                      <p className="mt-1 text-sm text-gray-500 line-clamp-2">{p.description}</p>
+                      <p className="mt-1 text-sm line-clamp-2" style={{ color: "var(--clr-secondary)" }}>{p.description}</p>
                     )}
                   </div>
-                  <div className="mt-4 flex items-center gap-3 border-t border-gray-100 pt-4">
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <div className="mt-4 flex items-center gap-3 border-t pt-4" style={{ borderColor: "var(--clr-border-2)" }}>
+                    <div className="flex items-center gap-1 text-xs" style={{ color: "var(--clr-muted)" }}>
                       <FileSpreadsheet className="h-3.5 w-3.5" />
                       {p._count.uploads} upload{p._count.uploads !== 1 ? "s" : ""}
                     </div>
-                    <span className="text-xs text-gray-300">·</span>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs" style={{ color: "var(--clr-border)" }}>·</span>
+                    <span className="text-xs" style={{ color: "var(--clr-muted)" }}>
                       {formatDistanceToNow(p.createdAt, { addSuffix: true })}
                     </span>
                   </div>

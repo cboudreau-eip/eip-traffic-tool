@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 
@@ -24,17 +24,20 @@ export function StatCard({
   iconBg = "#faf0d0",
 }: StatCardProps) {
   return (
-    <Card className="border" style={{ borderColor: "#e8edf5", background: "#fff" }}>
+    <div
+      className="rounded-xl border"
+      style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
+    >
       <CardContent className="p-5">
         <div className="flex items-start justify-between">
           <div className="space-y-1 min-w-0">
             <p
               className="text-xs font-semibold uppercase tracking-wider"
-              style={{ color: "#8a96aa" }}
+              style={{ color: "var(--clr-muted)" }}
             >
               {title}
             </p>
-            <p className="text-2xl font-bold" style={{ color: "#0f2f61" }}>
+            <p className="text-2xl font-bold" style={{ color: "var(--clr-primary)" }}>
               {value}
             </p>
             {change && (
@@ -50,7 +53,7 @@ export function StatCard({
                   {positive ? "↑" : "↓"} {change}
                 </span>
                 {changeLabel && (
-                  <span className="text-xs" style={{ color: "#8a96aa" }}>
+                  <span className="text-xs" style={{ color: "var(--clr-muted)" }}>
                     {changeLabel}
                   </span>
                 )}
@@ -65,6 +68,6 @@ export function StatCard({
           </div>
         </div>
       </CardContent>
-    </Card>
+    </div>
   );
 }

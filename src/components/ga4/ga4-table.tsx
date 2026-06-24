@@ -20,43 +20,51 @@ export function Ga4Table({
   labelHeader: string;
   showConversions?: boolean;
 }) {
-  if (!rows.length) return <p className="px-6 py-8 text-center text-sm text-gray-400">No data.</p>;
+  if (!rows.length) return (
+    <p className="px-6 py-8 text-center text-sm" style={{ color: "var(--clr-muted)" }}>No data.</p>
+  );
 
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-gray-100 bg-gray-50">
-            <th className="px-4 py-2.5 text-left text-xs font-medium text-gray-500">{labelHeader}</th>
-            <th className="px-4 py-2.5 text-right text-xs font-medium text-gray-500">Sessions</th>
-            <th className="px-4 py-2.5 text-right text-xs font-medium text-gray-500">Users</th>
+          <tr style={{ borderBottom: "1px solid var(--clr-border)", background: "var(--clr-surface-2)" }}>
+            <th className="px-4 py-2.5 text-left text-xs font-medium" style={{ color: "var(--clr-muted)" }}>{labelHeader}</th>
+            <th className="px-4 py-2.5 text-right text-xs font-medium" style={{ color: "var(--clr-muted)" }}>Sessions</th>
+            <th className="px-4 py-2.5 text-right text-xs font-medium" style={{ color: "var(--clr-muted)" }}>Users</th>
             {!showConversions && (
-              <th className="px-4 py-2.5 text-right text-xs font-medium text-gray-500">Bounce</th>
+              <th className="px-4 py-2.5 text-right text-xs font-medium" style={{ color: "var(--clr-muted)" }}>Bounce</th>
             )}
             {showConversions && (
-              <th className="px-4 py-2.5 text-right text-xs font-medium text-gray-500">Conv.</th>
+              <th className="px-4 py-2.5 text-right text-xs font-medium" style={{ color: "var(--clr-muted)" }}>Conv.</th>
             )}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-50">
+        <tbody>
           {rows.map((row, i) => (
-            <tr key={i} className="hover:bg-gray-50 transition-colors">
-              <td className="max-w-xs truncate px-4 py-2.5 text-xs text-gray-700" title={row.label}>
+            <tr
+              key={i}
+              className="transition-colors"
+              style={{ borderBottom: "1px solid var(--clr-border-2)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "var(--clr-surface-2)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "")}
+            >
+              <td className="max-w-xs truncate px-4 py-2.5 text-xs" style={{ color: "var(--clr-secondary)" }} title={row.label}>
                 {row.label}
               </td>
-              <td className="px-4 py-2.5 text-right text-xs font-medium text-gray-900">
+              <td className="px-4 py-2.5 text-right text-xs font-medium" style={{ color: "var(--clr-primary)" }}>
                 {formatNumber(row.sessions)}
               </td>
-              <td className="px-4 py-2.5 text-right text-xs text-gray-500">
+              <td className="px-4 py-2.5 text-right text-xs" style={{ color: "var(--clr-secondary)" }}>
                 {formatNumber(row.users)}
               </td>
               {!showConversions && (
-                <td className="px-4 py-2.5 text-right text-xs text-gray-500">
+                <td className="px-4 py-2.5 text-right text-xs" style={{ color: "var(--clr-secondary)" }}>
                   {formatPercent(row.bounceRate)}
                 </td>
               )}
               {showConversions && (
-                <td className="px-4 py-2.5 text-right text-xs text-gray-500">
+                <td className="px-4 py-2.5 text-right text-xs" style={{ color: "var(--clr-secondary)" }}>
                   {formatNumber(row.conversions ?? 0)}
                 </td>
               )}

@@ -44,9 +44,13 @@ export default async function UploadPage({
               { label: "XML Sitemap", desc: "URLs, last modified, change frequency, priority", ext: ".xml" },
               { label: "Custom Spreadsheet", desc: "Any xlsx, xls, csv, or tsv file", ext: ".xlsx .xls .csv .tsv" },
             ].map((item) => (
-              <div key={item.label} className="rounded-lg border border-gray-100 bg-gray-50 p-4">
-                <p className="text-sm font-medium text-gray-900">{item.label}</p>
-                <p className="mt-1 text-xs text-gray-500">{item.desc}</p>
+              <div
+                key={item.label}
+                className="rounded-lg border p-4"
+                style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface-2)" }}
+              >
+                <p className="text-sm font-medium" style={{ color: "var(--clr-primary)" }}>{item.label}</p>
+                <p className="mt-1 text-xs" style={{ color: "var(--clr-muted)" }}>{item.desc}</p>
                 <p className="mt-2 font-mono text-xs text-orange-500">{item.ext}</p>
               </div>
             ))}
@@ -68,11 +72,15 @@ export default async function UploadPage({
           <CardContent>
             <div className="space-y-2">
               {uploads.map((u) => (
-                <div key={u.id} className="flex items-center gap-3 rounded-lg border border-gray-100 px-4 py-3 hover:bg-gray-50">
-                  <FileSpreadsheet className="h-4 w-4 shrink-0 text-gray-400" />
+                <div
+                  key={u.id}
+                  className="row-hover flex items-center gap-3 rounded-lg border px-4 py-3"
+                  style={{ borderColor: "var(--clr-border-2)" }}
+                >
+                  <FileSpreadsheet className="h-4 w-4 shrink-0" style={{ color: "var(--clr-muted)" }} />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900">{u.filename}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="truncate text-sm font-medium" style={{ color: "var(--clr-primary)" }}>{u.filename}</p>
+                    <p className="text-xs" style={{ color: "var(--clr-muted)" }}>
                       {u.rowCount.toLocaleString()} rows · {formatDistanceToNow(u.uploadedAt, { addSuffix: true })}
                     </p>
                   </div>

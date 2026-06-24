@@ -34,12 +34,15 @@ export default async function PagesPage({
 
   if (gscUploads.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-white py-24 text-center">
+      <div
+        className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-24 text-center"
+        style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
+      >
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
           <FileSearch className="h-6 w-6 text-orange-500" />
         </div>
-        <h2 className="mt-4 text-lg font-semibold text-gray-900">No GSC data yet</h2>
-        <p className="mt-2 max-w-sm text-sm text-gray-500">
+        <h2 className="mt-4 text-lg font-semibold" style={{ color: "var(--clr-primary)" }}>No GSC data yet</h2>
+        <p className="mt-2 max-w-sm text-sm" style={{ color: "var(--clr-muted)" }}>
           Upload a Google Search Console export to see per-page traffic data.
         </p>
         <Link
@@ -96,7 +99,6 @@ export default async function PagesPage({
   for (const g of ga4Pages) {
     if (!g.pagePath) continue;
     ga4ByPath.set(g.pagePath, (g._sum.sessions ?? 0));
-    // Also store by path without leading slash variants
     const withSlash = g.pagePath.startsWith("/") ? g.pagePath : "/" + g.pagePath;
     ga4ByPath.set(withSlash, (g._sum.sessions ?? 0));
   }
@@ -108,7 +110,6 @@ export default async function PagesPage({
       const prev = prevMap.get(page);
       const path = toPath(page);
 
-      // Try matching GA4 by full URL, then by path
       const sessions =
         ga4ByPath.get(page) ??
         ga4ByPath.get(path) ??
@@ -133,12 +134,12 @@ export default async function PagesPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between text-xs" style={{ color: "#5d6a80" }}>
+      <div className="flex items-center justify-between text-xs" style={{ color: "var(--clr-secondary)" }}>
         <p>
           {previous ? (
             <>
-              Comparing <span className="font-medium" style={{ color: "#0f2f61" }}>{current.filename}</span>{" "}
-              vs <span className="font-medium" style={{ color: "#0f2f61" }}>{previous.filename}</span>
+              Comparing <span className="font-medium" style={{ color: "var(--clr-primary)" }}>{current.filename}</span>{" "}
+              vs <span className="font-medium" style={{ color: "var(--clr-primary)" }}>{previous.filename}</span>
               {newCount > 0 && (
                 <span className="ml-2 inline-flex items-center rounded bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">
                   {newCount} new

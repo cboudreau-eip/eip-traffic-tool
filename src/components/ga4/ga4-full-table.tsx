@@ -36,13 +36,6 @@ const COLUMNS: Column[] = [
 
 const PAGE_SIZE_OPTIONS = [25, 50, 100];
 
-function formatCell(key: SortKey, row: Ga4FullRow): string {
-  if (key === "pagePath")      return row.pagePath;
-  if (key === "bounceRate")    return formatPercent(row.bounceRate);
-  if (key === "avgSessionDur") return formatDuration(row.avgSessionDur);
-  return formatNumber(row[key] as number);
-}
-
 export function Ga4FullTable({ rows }: { rows: Ga4FullRow[] }) {
   const [sortKey, setSortKey] = useState<SortKey>("sessions");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
@@ -92,7 +85,7 @@ export function Ga4FullTable({ rows }: { rows: Ga4FullRow[] }) {
 
   if (!rows.length) {
     return (
-      <p className="py-8 text-center text-sm" style={{ color: "#8a96aa" }}>
+      <p className="py-8 text-center text-sm" style={{ color: "var(--clr-muted)" }}>
         No GA4 data yet. Upload a GA4 export.
       </p>
     );
@@ -107,16 +100,24 @@ export function Ga4FullTable({ rows }: { rows: Ga4FullRow[] }) {
           placeholder="Filter by page path..."
           value={filter}
           onChange={(e) => handleFilter(e.target.value)}
-          className="w-full max-w-sm rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#0f2f61]"
-          style={{ borderColor: "#e8edf5", color: "#0f2f61" }}
+          className="w-full max-w-sm rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2"
+          style={{
+            borderColor: "var(--clr-border)",
+            background: "var(--clr-surface)",
+            color: "var(--clr-primary)",
+          }}
         />
-        <div className="ml-auto flex items-center gap-2 text-xs" style={{ color: "#5d6a80" }}>
+        <div className="ml-auto flex items-center gap-2 text-xs" style={{ color: "var(--clr-secondary)" }}>
           <span>Rows per page:</span>
           <select
             value={pageSize}
             onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
-            className="rounded border px-2 py-1 text-xs outline-none focus:ring-2 focus:ring-[#0f2f61]"
-            style={{ borderColor: "#e8edf5", color: "#0f2f61" }}
+            className="rounded border px-2 py-1 text-xs outline-none"
+            style={{
+              borderColor: "var(--clr-border)",
+              background: "var(--clr-surface)",
+              color: "var(--clr-primary)",
+            }}
           >
             {PAGE_SIZE_OPTIONS.map((n) => (
               <option key={n} value={n}>{n}</option>
@@ -126,22 +127,24 @@ export function Ga4FullTable({ rows }: { rows: Ga4FullRow[] }) {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border" style={{ borderColor: "#e8edf5" }}>
+      <div className="overflow-x-auto rounded-xl border" style={{ borderColor: "var(--clr-border)" }}>
         <table className="w-full text-sm">
           <thead>
-            <tr style={{ background: "#f0f4fa", borderBottom: "2px solid #e8edf5" }}>
+            <tr style={{ background: "var(--clr-surface-2)", borderBottom: "2px solid var(--clr-border)" }}>
               {COLUMNS.map(({ key, label, numeric }) => {
                 const active = sortKey === key;
                 return (
                   <th
                     key={key}
                     onClick={() => toggleSort(key)}
-                    className="cursor-pointer select-none px-4 py-3 text-xs font-semibold uppercase tracking-wide transition-colors hover:bg-[#e8edf5]"
+                    className="cursor-pointer select-none px-4 py-3 text-xs font-semibold uppercase tracking-wide transition-colors"
                     style={{
                       textAlign: numeric ? "right" : "left",
-                      color: active ? "#0f2f61" : "#5d6a80",
+                      color: active ? "var(--clr-primary)" : "var(--clr-secondary)",
                       whiteSpace: "nowrap",
                     }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = "var(--clr-border)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = "")}
                   >
                     <span
                       className="inline-flex items-center gap-1"
@@ -150,8 +153,8 @@ export function Ga4FullTable({ rows }: { rows: Ga4FullRow[] }) {
                       {label}
                       {active ? (
                         sortDir === "desc"
-                          ? <ChevronDown className="h-3 w-3" style={{ color: "#C9A961" }} />
-                          : <ChevronUp   className="h-3 w-3" style={{ color: "#C9A961" }} />
+                          ? <ChevronDown className="h-3 w-3" style={{ color: "var(--clr-gold)" }} />
+                          : <ChevronUp   className="h-3 w-3" style={{ color: "var(--clr-gold)" }} />
                       ) : (
                         <ChevronsUpDown className="h-3 w-3 opacity-30" />
                       )}
@@ -166,34 +169,36 @@ export function Ga4FullTable({ rows }: { rows: Ga4FullRow[] }) {
               <tr
                 key={row.pagePath + i}
                 className="group transition-colors"
-                style={{ borderBottom: "1px solid #f0f4fa" }}
+                style={{ borderBottom: "1px solid var(--clr-border-2)" }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--clr-surface-2)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "")}
               >
                 <td
-                  className="max-w-[280px] truncate px-4 py-2.5 text-xs font-medium group-hover:text-[#C9A961] transition-colors"
-                  style={{ color: "#0f2f61" }}
+                  className="max-w-[280px] truncate px-4 py-2.5 text-xs font-medium transition-colors group-hover:text-[var(--clr-gold)]"
+                  style={{ color: "var(--clr-primary)" }}
                   title={row.pagePath}
                 >
                   {row.pagePath}
                 </td>
-                <td className="px-4 py-2.5 text-right text-xs font-semibold" style={{ color: "#0f2f61" }}>
+                <td className="px-4 py-2.5 text-right text-xs font-semibold" style={{ color: "var(--clr-primary)" }}>
                   {formatNumber(row.sessions)}
                 </td>
-                <td className="px-4 py-2.5 text-right text-xs" style={{ color: "#5d6a80" }}>
+                <td className="px-4 py-2.5 text-right text-xs" style={{ color: "var(--clr-secondary)" }}>
                   {formatNumber(row.users)}
                 </td>
-                <td className="px-4 py-2.5 text-right text-xs" style={{ color: "#5d6a80" }}>
+                <td className="px-4 py-2.5 text-right text-xs" style={{ color: "var(--clr-secondary)" }}>
                   {formatNumber(row.newUsers)}
                 </td>
-                <td className="px-4 py-2.5 text-right text-xs" style={{ color: "#5d6a80" }}>
+                <td className="px-4 py-2.5 text-right text-xs" style={{ color: "var(--clr-secondary)" }}>
                   {formatNumber(row.pageViews)}
                 </td>
-                <td className="px-4 py-2.5 text-right text-xs" style={{ color: "#5d6a80" }}>
+                <td className="px-4 py-2.5 text-right text-xs" style={{ color: "var(--clr-secondary)" }}>
                   {formatPercent(row.bounceRate)}
                 </td>
-                <td className="px-4 py-2.5 text-right text-xs" style={{ color: "#5d6a80" }}>
+                <td className="px-4 py-2.5 text-right text-xs" style={{ color: "var(--clr-secondary)" }}>
                   {formatDuration(row.avgSessionDur)}
                 </td>
-                <td className="px-4 py-2.5 text-right text-xs" style={{ color: "#5d6a80" }}>
+                <td className="px-4 py-2.5 text-right text-xs" style={{ color: "var(--clr-secondary)" }}>
                   {formatNumber(row.conversions)}
                 </td>
               </tr>
@@ -204,9 +209,9 @@ export function Ga4FullTable({ rows }: { rows: Ga4FullRow[] }) {
         {/* Pagination footer */}
         <div
           className="flex items-center justify-between border-t px-4 py-2.5"
-          style={{ borderColor: "#e8edf5" }}
+          style={{ borderColor: "var(--clr-border)" }}
         >
-          <span className="text-xs" style={{ color: "#8a96aa" }}>
+          <span className="text-xs" style={{ color: "var(--clr-muted)" }}>
             {sorted.length === 0
               ? "No results"
               : `${startRow}–${endRow} of ${sorted.length.toLocaleString()} pages`}
@@ -216,20 +221,21 @@ export function Ga4FullTable({ rows }: { rows: Ga4FullRow[] }) {
               onClick={() => setPage(1)}
               disabled={safePage === 1}
               className="rounded px-2 py-1 text-xs transition-colors disabled:opacity-30"
-              style={{ color: "#0f2f61" }}
+              style={{ color: "var(--clr-primary)" }}
             >
               «
             </button>
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={safePage === 1}
-              className="rounded p-1 transition-colors disabled:opacity-30 hover:bg-[#f0f4fa]"
-              style={{ color: "#0f2f61" }}
+              className="rounded p-1 transition-colors disabled:opacity-30"
+              style={{ color: "var(--clr-primary)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "var(--clr-surface-2)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "")}
             >
               <ChevronLeft className="h-3.5 w-3.5" />
             </button>
 
-            {/* Page number pills */}
             {Array.from({ length: totalPages }, (_, i) => i + 1)
               .filter((p) => p === 1 || p === totalPages || Math.abs(p - safePage) <= 2)
               .reduce<(number | "…")[]>((acc, p, idx, arr) => {
@@ -239,15 +245,15 @@ export function Ga4FullTable({ rows }: { rows: Ga4FullRow[] }) {
               }, [])
               .map((p, i) =>
                 p === "…" ? (
-                  <span key={`ellipsis-${i}`} className="px-1 text-xs" style={{ color: "#8a96aa" }}>…</span>
+                  <span key={`ellipsis-${i}`} className="px-1 text-xs" style={{ color: "var(--clr-muted)" }}>…</span>
                 ) : (
                   <button
                     key={p}
                     onClick={() => setPage(p as number)}
                     className="min-w-[28px] rounded px-1.5 py-1 text-xs font-medium transition-colors"
                     style={{
-                      background: safePage === p ? "#0f2f61" : "transparent",
-                      color: safePage === p ? "#fff" : "#5d6a80",
+                      background: safePage === p ? "var(--clr-primary)" : "transparent",
+                      color: safePage === p ? "var(--clr-surface)" : "var(--clr-secondary)",
                     }}
                   >
                     {p}
@@ -258,8 +264,10 @@ export function Ga4FullTable({ rows }: { rows: Ga4FullRow[] }) {
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={safePage === totalPages}
-              className="rounded p-1 transition-colors disabled:opacity-30 hover:bg-[#f0f4fa]"
-              style={{ color: "#0f2f61" }}
+              className="rounded p-1 transition-colors disabled:opacity-30"
+              style={{ color: "var(--clr-primary)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "var(--clr-surface-2)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "")}
             >
               <ChevronRight className="h-3.5 w-3.5" />
             </button>
@@ -267,7 +275,7 @@ export function Ga4FullTable({ rows }: { rows: Ga4FullRow[] }) {
               onClick={() => setPage(totalPages)}
               disabled={safePage === totalPages}
               className="rounded px-2 py-1 text-xs transition-colors disabled:opacity-30"
-              style={{ color: "#0f2f61" }}
+              style={{ color: "var(--clr-primary)" }}
             >
               »
             </button>

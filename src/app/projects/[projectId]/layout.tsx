@@ -41,31 +41,40 @@ export default async function ProjectLayout({
   return (
     <div className="space-y-5">
       {/* Single-row: breadcrumb + divider + tabs */}
-      <div className="bg-white px-5 shadow-sm rounded-xl border" style={{ borderColor: "#e8edf5" }}>
+      <div
+        className="px-5 shadow-sm rounded-xl border"
+        style={{ background: "var(--clr-surface)", borderColor: "var(--clr-border)" }}
+      >
         <div className="flex items-center gap-3 overflow-x-auto">
           {/* Compact breadcrumb */}
           <div className="flex shrink-0 items-center gap-1.5 text-xs">
-            <Link href="/" className="hover:text-[#0f2f61]" style={{ color: "#8a96aa" }}>
+            <Link
+              href="/"
+              className="hover:underline"
+              style={{ color: "var(--clr-muted)" }}
+            >
               Projects
             </Link>
-            <ChevronRight className="h-3 w-3" style={{ color: "#b9c2d0" }} />
+            <ChevronRight className="h-3 w-3" style={{ color: "var(--clr-border)" }} />
             {project.url ? (
               <a
                 href={project.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold hover:underline"
-                style={{ color: "#0f2f61" }}
+                style={{ color: "var(--clr-primary)" }}
               >
                 {project.name}
               </a>
             ) : (
-              <span className="font-semibold" style={{ color: "#0f2f61" }}>{project.name}</span>
+              <span className="font-semibold" style={{ color: "var(--clr-primary)" }}>
+                {project.name}
+              </span>
             )}
           </div>
 
           {/* Vertical divider */}
-          <div className="h-4 w-px shrink-0" style={{ background: "#d8e0ed" }} />
+          <div className="h-4 w-px shrink-0" style={{ background: "var(--clr-border)" }} />
 
           {/* Tabs */}
           <nav className="flex items-center overflow-x-auto">

@@ -22,9 +22,12 @@ export function NavLink({
       className={cn(
         "flex items-center gap-1.5 border-b-2 px-2.5 py-2.5 text-xs transition-colors whitespace-nowrap",
         active
-          ? "border-[#0f2f61] font-semibold text-[#0f2f61]"
-          : "border-transparent font-medium text-[#5d6a80] hover:border-[#c5d0e6] hover:text-[#0f2f61]"
+          ? "border-[var(--clr-primary)] font-semibold"
+          : "border-transparent font-medium hover:border-[var(--clr-border)]"
       )}
+      style={{
+        color: active ? "var(--clr-primary)" : "var(--clr-secondary)",
+      }}
     >
       {children}
       {label}

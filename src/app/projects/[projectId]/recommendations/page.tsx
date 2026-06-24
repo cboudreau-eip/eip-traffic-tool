@@ -40,21 +40,27 @@ const TYPE_ICONS = {
 function RecommendationCard({ rec }: { rec: Recommendation }) {
   const Icon = TYPE_ICONS[rec.type];
   return (
-    <div className={`rounded-xl border-l-4 border border-gray-200 bg-white p-5 shadow-sm ${PRIORITY_STYLES[rec.priority]}`}>
+    <div
+      className={`rounded-xl border-l-4 border p-5 shadow-sm ${PRIORITY_STYLES[rec.priority]}`}
+      style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3 min-w-0">
-          <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-50">
-            <Icon className="h-4 w-4 text-gray-500" />
+          <div
+            className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+            style={{ background: "var(--clr-surface-2)" }}
+          >
+            <Icon className="h-4 w-4" style={{ color: "var(--clr-secondary)" }} />
           </div>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-1">
               <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${rec.tagColor}`}>
                 {rec.tag}
               </span>
-              <span className="text-xs text-gray-400">{PRIORITY_LABELS[rec.priority]}</span>
+              <span className="text-xs" style={{ color: "var(--clr-muted)" }}>{PRIORITY_LABELS[rec.priority]}</span>
             </div>
-            <h3 className="text-sm font-semibold text-gray-900">{rec.title}</h3>
-            <p className="mt-1 text-xs text-gray-500 leading-relaxed">{rec.description}</p>
+            <h3 className="text-sm font-semibold" style={{ color: "var(--clr-primary)" }}>{rec.title}</h3>
+            <p className="mt-1 text-xs leading-relaxed" style={{ color: "var(--clr-muted)" }}>{rec.description}</p>
             <div className="mt-2 flex items-start gap-1.5">
               <ArrowUp className="mt-0.5 h-3 w-3 shrink-0 text-orange-500" />
               <p className="text-xs font-medium text-orange-600">{rec.action}</p>
@@ -62,20 +68,19 @@ function RecommendationCard({ rec }: { rec: Recommendation }) {
           </div>
         </div>
 
-        {/* Metrics */}
         <div className="shrink-0 text-right">
-          <p className="text-lg font-bold text-gray-900">
+          <p className="text-lg font-bold" style={{ color: "var(--clr-primary)" }}>
             +{formatNumber(rec.metrics.estimatedGain)}
           </p>
-          <p className="text-xs text-gray-400">est. clicks</p>
+          <p className="text-xs" style={{ color: "var(--clr-muted)" }}>est. clicks</p>
           <div className="mt-2 space-y-0.5">
-            <p className="text-xs text-gray-500">
+            <p className="text-xs" style={{ color: "var(--clr-muted)" }}>
               {formatNumber(rec.metrics.impressions)} imp
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs" style={{ color: "var(--clr-muted)" }}>
               {formatPercent(rec.metrics.ctr)} CTR
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs" style={{ color: "var(--clr-muted)" }}>
               pos {rec.metrics.position.toFixed(1)}
             </p>
           </div>
@@ -99,12 +104,15 @@ function Section({
   return (
     <div className="space-y-3">
       <div>
-        <h2 className="text-base font-semibold text-gray-900">{title}</h2>
-        <p className="text-xs text-gray-500">{description}</p>
+        <h2 className="text-base font-semibold" style={{ color: "var(--clr-primary)" }}>{title}</h2>
+        <p className="text-xs" style={{ color: "var(--clr-muted)" }}>{description}</p>
       </div>
       {recs.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-gray-200 bg-white py-8 text-center">
-          <p className="text-sm text-gray-400">{emptyMsg}</p>
+        <div
+          className="rounded-xl border border-dashed py-8 text-center"
+          style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
+        >
+          <p className="text-sm" style={{ color: "var(--clr-muted)" }}>{emptyMsg}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -162,14 +170,13 @@ export default async function RecommendationsPage({
   const hasGscData = gscGroups.length > 0;
   const hasGa4Data = ga4Groups.length > 0;
   const hasAnyData = gscTotal > 0 || ga4Total > 0;
-  // GSC rows exist but none have a query column — page-level export
   const gscMissingQuery = gscTotal > 0 && gscGroups.length === 0;
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         {totalRecs > 0 && (
-          <p className="text-sm" style={{ color: "#5d6a80" }}>
+          <p className="text-sm" style={{ color: "var(--clr-secondary)" }}>
             <span className="font-bold text-orange-500">+{formatNumber(totalEstimatedGain)}</span>
             {" "}estimated clicks available
           </p>
@@ -180,12 +187,15 @@ export default async function RecommendationsPage({
       </div>
 
       {!hasAnyData && (
-        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-white py-20 text-center">
+        <div
+          className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-20 text-center"
+          style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
+        >
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
             <Lightbulb className="h-6 w-6 text-orange-500" />
           </div>
-          <h2 className="mt-4 text-lg font-semibold text-gray-900">No data yet</h2>
-          <p className="mt-2 max-w-sm text-sm text-gray-500">
+          <h2 className="mt-4 text-lg font-semibold" style={{ color: "var(--clr-primary)" }}>No data yet</h2>
+          <p className="mt-2 max-w-sm text-sm" style={{ color: "var(--clr-muted)" }}>
             Upload a Google Search Console or GA4 export to generate recommendations.
           </p>
         </div>
@@ -196,23 +206,26 @@ export default async function RecommendationsPage({
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
             <AlertCircle className="h-6 w-6 text-orange-500" />
           </div>
-          <h2 className="mt-4 text-base font-semibold text-gray-900">GSC data found, but no query column</h2>
-          <p className="mt-2 max-w-md text-sm text-gray-500">
+          <h2 className="mt-4 text-base font-semibold" style={{ color: "var(--clr-primary)" }}>GSC data found, but no query column</h2>
+          <p className="mt-2 max-w-md text-sm" style={{ color: "var(--clr-muted)" }}>
             Your Search Console export appears to be a <strong>page-level</strong> report. Recommendations need a <strong>query-level</strong> export.
           </p>
-          <p className="mt-3 max-w-md text-xs text-gray-400">
+          <p className="mt-3 max-w-md text-xs" style={{ color: "var(--clr-muted)" }}>
             In Google Search Console → Search Results → make sure <strong>Queries</strong> is selected as the dimension before exporting.
           </p>
         </div>
       )}
 
       {(hasGscData || hasGa4Data) && totalRecs === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white py-16 text-center">
+        <div
+          className="flex flex-col items-center justify-center rounded-xl border py-16 text-center"
+          style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
+        >
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
             <AlertCircle className="h-6 w-6 text-green-500" />
           </div>
-          <h2 className="mt-4 text-base font-semibold text-gray-900">No major issues found</h2>
-          <p className="mt-2 max-w-sm text-sm text-gray-500">
+          <h2 className="mt-4 text-base font-semibold" style={{ color: "var(--clr-primary)" }}>No major issues found</h2>
+          <p className="mt-2 max-w-sm text-sm" style={{ color: "var(--clr-muted)" }}>
             Your GSC data looks healthy. Upload more data or check back after your next export.
           </p>
         </div>
@@ -220,7 +233,6 @@ export default async function RecommendationsPage({
 
       {(hasGscData || hasGa4Data) && totalRecs > 0 && (
         <>
-          {/* Summary bar */}
           <div className="grid gap-4 sm:grid-cols-3">
             {[
               { label: "Page 2 Trap", count: page2Recs.length, gain: page2Recs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-purple-600" },
@@ -232,9 +244,9 @@ export default async function RecommendationsPage({
             ].map((item) => (
               <Card key={item.label}>
                 <CardContent className="p-4">
-                  <p className="text-xs text-gray-500">{item.label}</p>
+                  <p className="text-xs" style={{ color: "var(--clr-muted)" }}>{item.label}</p>
                   <p className={`mt-1 text-xl font-bold ${item.color}`}>{item.count} found</p>
-                  <p className="text-xs text-gray-400">+{formatNumber(item.gain)} est. clicks</p>
+                  <p className="text-xs" style={{ color: "var(--clr-muted)" }}>+{formatNumber(item.gain)} est. clicks</p>
                 </CardContent>
               </Card>
             ))}

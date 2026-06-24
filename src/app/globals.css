@@ -1,24 +1,57 @@
 @import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
 
+/* ── Light mode tokens ── */
 :root {
-  --background: #faf9f5;
-  --foreground: #0f2f61;
+  --clr-bg:          #faf9f5;
+  --clr-surface:     #ffffff;
+  --clr-surface-2:   #f0f4fa;
+  --clr-surface-3:   #faf9f5;
+  --clr-border:      #e8edf5;
+  --clr-border-2:    #eef1f6;
+  --clr-primary:     #0f2f61;
+  --clr-primary-mid: #1a4480;
+  --clr-secondary:   #5d6a80;
+  --clr-muted:       #8a96aa;
+  --clr-gold:        #C9A961;
+  --clr-gold-dark:   #b08a3a;
+
+  /* Legacy aliases kept for shadcn/ui card compatibility */
+  --background: var(--clr-bg);
+  --foreground: var(--clr-primary);
   --brand-navy: #0f2f61;
-  --brand-navy-mid: #1a4480;
   --brand-gold: #C9A961;
-  --brand-gold-dark: #b08a3a;
-  --text-secondary: #5d6a80;
-  --border-color: #e8edf5;
+}
+
+/* ── Dark mode tokens ── */
+.dark {
+  --clr-bg:          #0d1520;
+  --clr-surface:     #111d2e;
+  --clr-surface-2:   #162032;
+  --clr-surface-3:   #0d1520;
+  --clr-border:      #1e3048;
+  --clr-border-2:    #1a2a40;
+  --clr-primary:     #c8d8f0;
+  --clr-primary-mid: #7fa8d8;
+  --clr-secondary:   #8fa3c0;
+  --clr-muted:       #5d7494;
+  --clr-gold:        #C9A961;
+  --clr-gold-dark:   #d4b870;
+
+  --background: var(--clr-bg);
+  --foreground: var(--clr-primary);
+
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--clr-bg);
+  --color-foreground: var(--clr-primary);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--clr-bg);
+  color: var(--clr-primary);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -26,3 +59,6 @@ body {
 * {
   box-sizing: border-box;
 }
+
+.row-hover { transition: background 0.1s; }
+.row-hover:hover { background: var(--clr-surface-2); }

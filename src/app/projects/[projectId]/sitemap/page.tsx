@@ -25,8 +25,11 @@ export default async function SitemapPage({ params }: { params: Promise<{ projec
   return (
     <div className="space-y-8">
       {!hasData && (
-        <div className="rounded-xl border-2 border-dashed border-gray-200 bg-white py-16 text-center">
-          <p className="text-sm text-gray-500">No sitemap data yet. Upload an XML sitemap.</p>
+        <div
+          className="rounded-xl border-2 border-dashed py-16 text-center"
+          style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
+        >
+          <p className="text-sm" style={{ color: "var(--clr-muted)" }}>No sitemap data yet. Upload an XML sitemap.</p>
         </div>
       )}
 
@@ -34,8 +37,8 @@ export default async function SitemapPage({ params }: { params: Promise<{ projec
         <>
           <div className="grid gap-4 sm:grid-cols-3">
             <StatCard title="Total URLs" value={count.toLocaleString()} icon={Globe} />
-            <StatCard title="With Last Modified" value={withLastmod.toLocaleString()} icon={Calendar} iconColor="text-blue-500" />
-            <StatCard title="Change Frequencies" value={byChangefreq.length.toString()} icon={Link2} iconColor="text-green-500" />
+            <StatCard title="With Last Modified" value={withLastmod.toLocaleString()} icon={Calendar} iconColor="#3b82f6" iconBg="#eff6ff" />
+            <StatCard title="Change Frequencies" value={byChangefreq.length.toString()} icon={Link2} iconColor="#22c55e" iconBg="#dcfce7" />
           </div>
 
           {byChangefreq.length > 0 && (
@@ -44,9 +47,13 @@ export default async function SitemapPage({ params }: { params: Promise<{ projec
               <CardContent>
                 <div className="flex flex-wrap gap-3">
                   {byChangefreq.map((b) => (
-                    <div key={b.changefreq ?? "none"} className="rounded-lg border border-gray-100 bg-gray-50 px-4 py-3 text-center">
-                      <p className="text-sm font-semibold text-gray-900">{b._count.id}</p>
-                      <p className="text-xs capitalize text-gray-500">{b.changefreq ?? "unset"}</p>
+                    <div
+                      key={b.changefreq ?? "none"}
+                      className="rounded-lg border px-4 py-3 text-center"
+                      style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface-2)" }}
+                    >
+                      <p className="text-sm font-semibold" style={{ color: "var(--clr-primary)" }}>{b._count.id}</p>
+                      <p className="text-xs capitalize" style={{ color: "var(--clr-muted)" }}>{b.changefreq ?? "unset"}</p>
                     </div>
                   ))}
                 </div>
@@ -62,22 +69,22 @@ export default async function SitemapPage({ params }: { params: Promise<{ projec
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-100 bg-gray-50">
-                      <th className="px-4 py-2.5 text-left text-xs font-medium text-gray-500">URL</th>
-                      <th className="px-4 py-2.5 text-right text-xs font-medium text-gray-500">Last Modified</th>
-                      <th className="px-4 py-2.5 text-right text-xs font-medium text-gray-500">Change Freq</th>
-                      <th className="px-4 py-2.5 text-right text-xs font-medium text-gray-500">Priority</th>
+                    <tr style={{ borderBottom: "1px solid var(--clr-border)", background: "var(--clr-surface-2)" }}>
+                      <th className="px-4 py-2.5 text-left text-xs font-medium" style={{ color: "var(--clr-muted)" }}>URL</th>
+                      <th className="px-4 py-2.5 text-right text-xs font-medium" style={{ color: "var(--clr-muted)" }}>Last Modified</th>
+                      <th className="px-4 py-2.5 text-right text-xs font-medium" style={{ color: "var(--clr-muted)" }}>Change Freq</th>
+                      <th className="px-4 py-2.5 text-right text-xs font-medium" style={{ color: "var(--clr-muted)" }}>Priority</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
+                  <tbody>
                     {urls.map((u) => (
-                      <tr key={u.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="max-w-sm truncate px-4 py-2.5 text-xs text-blue-600 hover:underline">
+                      <tr key={u.id} className="row-hover transition-colors" style={{ borderBottom: "1px solid var(--clr-border-2)" }}>
+                        <td className="max-w-sm truncate px-4 py-2.5 text-xs text-blue-500 hover:underline">
                           <a href={u.loc} target="_blank" rel="noopener noreferrer">{u.loc}</a>
                         </td>
-                        <td className="px-4 py-2.5 text-right text-xs text-gray-500">{u.lastmod ?? "—"}</td>
-                        <td className="px-4 py-2.5 text-right text-xs capitalize text-gray-500">{u.changefreq ?? "—"}</td>
-                        <td className="px-4 py-2.5 text-right text-xs text-gray-500">{u.priority ?? "—"}</td>
+                        <td className="px-4 py-2.5 text-right text-xs" style={{ color: "var(--clr-muted)" }}>{u.lastmod ?? "—"}</td>
+                        <td className="px-4 py-2.5 text-right text-xs capitalize" style={{ color: "var(--clr-muted)" }}>{u.changefreq ?? "—"}</td>
+                        <td className="px-4 py-2.5 text-right text-xs" style={{ color: "var(--clr-muted)" }}>{u.priority ?? "—"}</td>
                       </tr>
                     ))}
                   </tbody>

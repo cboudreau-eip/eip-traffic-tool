@@ -28,8 +28,11 @@ export default async function GscPage({ params }: { params: Promise<{ projectId:
   return (
     <div className="space-y-8">
       {!hasData && (
-        <div className="rounded-xl border-2 border-dashed border-gray-200 bg-white py-16 text-center">
-          <p className="text-sm text-gray-500">No GSC data yet. Upload a Search Console export.</p>
+        <div
+          className="rounded-xl border-2 border-dashed py-16 text-center"
+          style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
+        >
+          <p className="text-sm" style={{ color: "var(--clr-muted)" }}>No GSC data yet. Upload a Search Console export.</p>
         </div>
       )}
 
@@ -37,9 +40,9 @@ export default async function GscPage({ params }: { params: Promise<{ projectId:
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard title="Total Clicks" value={formatNumber(totals._sum.clicks ?? 0)} icon={MousePointerClick} />
-            <StatCard title="Impressions" value={formatNumber(totals._sum.impressions ?? 0)} icon={Eye} iconColor="text-blue-500" />
-            <StatCard title="Avg. CTR" value={formatPercent(totals._avg.ctr ?? 0)} icon={TrendingUp} iconColor="text-green-500" />
-            <StatCard title="Avg. Position" value={(totals._avg.position ?? 0).toFixed(1)} icon={Globe} iconColor="text-purple-500" />
+            <StatCard title="Impressions" value={formatNumber(totals._sum.impressions ?? 0)} icon={Eye} iconColor="#3b82f6" iconBg="#eff6ff" />
+            <StatCard title="Avg. CTR" value={formatPercent(totals._avg.ctr ?? 0)} icon={TrendingUp} iconColor="#22c55e" iconBg="#dcfce7" />
+            <StatCard title="Avg. Position" value={(totals._avg.position ?? 0).toFixed(1)} icon={Globe} iconColor="#a855f7" iconBg="#f3e8ff" />
           </div>
 
           {clicksByDate.length > 1 && (

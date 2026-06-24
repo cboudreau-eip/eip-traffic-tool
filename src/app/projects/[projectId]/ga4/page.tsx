@@ -64,17 +64,20 @@ export default async function Ga4Page({ params }: { params: Promise<{ projectId:
   return (
     <div className="space-y-8">
       {!hasData && (
-        <div className="rounded-xl border-2 border-dashed border-gray-200 bg-white py-16 text-center">
-          <p className="text-sm text-gray-500">No GA4 data yet. Upload a GA4 export.</p>
+        <div
+          className="rounded-xl border-2 border-dashed py-16 text-center"
+          style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
+        >
+          <p className="text-sm" style={{ color: "var(--clr-muted)" }}>No GA4 data yet. Upload a GA4 export.</p>
         </div>
       )}
 
       {hasData && (
         <>
           {byDate.length > 1 && (
-            <Card className="border" style={{ borderColor: "#e8edf5" }}>
+            <Card>
               <CardHeader>
-                <CardTitle className="text-base" style={{ color: "#0f2f61" }}>Sessions &amp; Users Over Time</CardTitle>
+                <CardTitle className="text-base">Sessions &amp; Users Over Time</CardTitle>
               </CardHeader>
               <CardContent>
                 <Ga4Chart
@@ -89,7 +92,7 @@ export default async function Ga4Page({ params }: { params: Promise<{ projectId:
             </Card>
           )}
 
-          <Card className="border" style={{ borderColor: "#e8edf5" }}>
+          <Card>
             <CardContent className="pt-6">
               <Ga4FullTable rows={tableRows} />
             </CardContent>
@@ -107,9 +110,9 @@ export default async function Ga4Page({ params }: { params: Promise<{ projectId:
           </div>
 
           {bySource.length > 0 && (
-            <Card className="border" style={{ borderColor: "#e8edf5" }}>
+            <Card>
               <CardHeader>
-                <CardTitle className="text-base" style={{ color: "#0f2f61" }}>Traffic Sources</CardTitle>
+                <CardTitle className="text-base">Traffic Sources</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <Ga4Table
