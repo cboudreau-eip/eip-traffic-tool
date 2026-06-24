@@ -201,34 +201,25 @@ export default async function PagesPage({
 
   return (
     <div className="space-y-8">
-      {/* Upload comparison view */}
-      {current && (
+      {/* Upload comparison view — only show when there are 2+ GSC uploads to compare */}
+      {current && previous && (
         <div className="space-y-4">
           <div className="flex items-center justify-between text-xs" style={{ color: "var(--clr-secondary)" }}>
             <p>
-              {previous ? (
-                <>
-                  Comparing <span className="font-medium" style={{ color: "var(--clr-primary)" }}>{current.filename}</span>{" "}
-                  vs <span className="font-medium" style={{ color: "var(--clr-primary)" }}>{previous.filename}</span>
-                  {newCount > 0 && (
-                    <span className="ml-2 inline-flex items-center rounded bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">
-                      {newCount} new
-                    </span>
-                  )}
-                </>
-              ) : (
-                <>
-                  {current.filename} · {format(new Date(current.uploadedAt), "MMM d, yyyy")} ·{" "}
-                  <span className="text-orange-500">Upload again next week to see changes</span>
-                </>
+              Comparing <span className="font-medium" style={{ color: "var(--clr-primary)" }}>{current.filename}</span>{" "}
+              vs <span className="font-medium" style={{ color: "var(--clr-primary)" }}>{previous.filename}</span>
+              {newCount > 0 && (
+                <span className="ml-2 inline-flex items-center rounded bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">
+                  {newCount} new
+                </span>
               )}
             </p>
             <div className="text-right">
               <p>{rows.length} pages</p>
-              {previous && <p className="mt-0.5">Last upload {format(new Date(current.uploadedAt), "MMM d, yyyy")}</p>}
+              <p className="mt-0.5">Last upload {format(new Date(current.uploadedAt), "MMM d, yyyy")}</p>
             </div>
           </div>
-          <PagesTable rows={rows} hasComparison={!!previous} currentUploadId={current.id} />
+          <PagesTable rows={rows} hasComparison currentUploadId={current.id} />
         </div>
       )}
 
