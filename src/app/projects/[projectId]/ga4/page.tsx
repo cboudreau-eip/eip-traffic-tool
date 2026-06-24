@@ -90,10 +90,7 @@ export default async function Ga4Page({ params }: { params: Promise<{ projectId:
           )}
 
           <Card className="border" style={{ borderColor: "#e8edf5" }}>
-            <CardHeader>
-              <CardTitle className="text-base" style={{ color: "#0f2f61" }}>Pages</CardTitle>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <Ga4FullTable rows={tableRows} />
             </CardContent>
           </Card>
