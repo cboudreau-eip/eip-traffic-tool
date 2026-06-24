@@ -106,6 +106,17 @@ export default async function Ga4Page({ params }: { params: Promise<{ projectId:
             </CardContent>
           </Card>
 
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCard title="Sessions" value={formatNumber(totals._sum.sessions ?? 0)} icon={Users} />
+            <StatCard title="Users" value={formatNumber(totals._sum.users ?? 0)} icon={Users} iconColor="#4f6ef7" iconBg="#eef0fe" />
+            <StatCard title="Page Views" value={formatNumber(totals._sum.pageViews ?? 0)} icon={Eye} iconColor="#22c55e" iconBg="#dcfce7" />
+            <StatCard title="Conversions" value={formatNumber(totals._sum.conversions ?? 0)} icon={MousePointerClick} iconColor="#f97316" iconBg="#ffedd5" />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <StatCard title="Avg. Session Duration" value={formatDuration(totals._avg.avgSessionDur ?? 0)} icon={Clock} iconColor="#a855f7" iconBg="#f3e8ff" />
+            <StatCard title="Avg. Bounce Rate" value={formatPercent(totals._avg.bounceRate ?? 0)} icon={TrendingUp} iconColor="#ef4444" iconBg="#fee2e2" />
+          </div>
+
           {bySource.length > 0 && (
             <Card className="border" style={{ borderColor: "#e8edf5" }}>
               <CardHeader>
