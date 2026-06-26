@@ -27,23 +27,26 @@ export function GscChart({ data }: { data: GscChartData[] }) {
     date: d.date ? d.date.substring(5) : d.date,
   }));
 
-  const gridColor    = dark ? "#1a2a40" : "#eef1f6";
-  const tickColor    = dark ? "#5d7494" : "#8a96aa";
-  const tooltipBg    = dark ? "#111d2e" : "#ffffff";
-  const tooltipBorder= dark ? "#1e3048" : "#e8edf5";
-  const tooltipText  = dark ? "#c8d8f0" : "#0f2f61";
+  // Material 3 palette — primary (clicks) & tertiary (impressions)
+  const primary      = dark ? "#D0BCFF" : "#6750A4";
+  const tertiary     = dark ? "#EFB8C8" : "#7D5260";
+  const gridColor    = dark ? "#49454F" : "#E7E0EC";
+  const tickColor    = dark ? "#CAC4D0" : "#79747E";
+  const tooltipBg    = dark ? "#211F26" : "#FEF7FF";
+  const tooltipBorder= dark ? "#49454F" : "#CAC4D0";
+  const tooltipText  = dark ? "#E6E0E9" : "#1D1B20";
 
   return (
     <ResponsiveContainer width="100%" height={280}>
       <AreaChart data={formatted} margin={{ top: 4, right: 16, bottom: 0, left: 0 }}>
         <defs>
           <linearGradient id="clicksGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#1a4480" stopOpacity={dark ? 0.35 : 0.18} />
-            <stop offset="95%" stopColor="#1a4480" stopOpacity={0.02} />
+            <stop offset="5%" stopColor={primary} stopOpacity={dark ? 0.35 : 0.18} />
+            <stop offset="95%" stopColor={primary} stopOpacity={0.02} />
           </linearGradient>
           <linearGradient id="impressionsGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#C9A961" stopOpacity={dark ? 0.4 : 0.3} />
-            <stop offset="95%" stopColor="#C9A961" stopOpacity={0.03} />
+            <stop offset="5%" stopColor={tertiary} stopOpacity={dark ? 0.4 : 0.3} />
+            <stop offset="95%" stopColor={tertiary} stopOpacity={0.03} />
           </linearGradient>
         </defs>
         <CartesianGrid stroke={gridColor} vertical={false} />
@@ -63,8 +66,8 @@ export function GscChart({ data }: { data: GscChartData[] }) {
           }}
         />
         <Legend iconSize={10} iconType="circle" wrapperStyle={{ fontSize: 12, color: tickColor }} />
-        <Area type="monotone" dataKey="impressions" name="Impressions" stroke="#C9A961" strokeWidth={2} fill="url(#impressionsGradient)" dot={false} />
-        <Area type="monotone" dataKey="clicks" name="Clicks" stroke="#1a4480" strokeWidth={2} fill="url(#clicksGradient)" dot={false} />
+        <Area type="monotone" dataKey="impressions" name="Impressions" stroke={tertiary} strokeWidth={2} fill="url(#impressionsGradient)" dot={false} />
+        <Area type="monotone" dataKey="clicks" name="Clicks" stroke={primary} strokeWidth={2} fill="url(#clicksGradient)" dot={false} />
       </AreaChart>
     </ResponsiveContainer>
   );

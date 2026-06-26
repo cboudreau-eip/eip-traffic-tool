@@ -51,7 +51,7 @@ export default async function UploadPage({
               >
                 <p className="text-sm font-medium" style={{ color: "var(--clr-primary)" }}>{item.label}</p>
                 <p className="mt-1 text-xs" style={{ color: "var(--clr-muted)" }}>{item.desc}</p>
-                <p className="mt-2 font-mono text-xs text-orange-500">{item.ext}</p>
+                <p className="mt-2 font-mono text-xs text-md-primary">{item.ext}</p>
               </div>
             ))}
           </div>

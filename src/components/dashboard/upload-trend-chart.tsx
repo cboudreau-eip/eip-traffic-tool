@@ -32,10 +32,10 @@ export function UploadTrendChart({
 }) {
   const dark = useDarkMode();
 
-  const gridColor    = dark ? "#1a2a40" : "#f0f0f0";
-  const tickColor    = dark ? "#5d7494" : "#9ca3af";
-  const tooltipBg    = dark ? "#111d2e" : "#ffffff";
-  const tooltipBorder= dark ? "#1e3048" : "#e5e7eb";
+  const gridColor    = dark ? "#49454F" : "#E7E0EC";
+  const tickColor    = dark ? "#CAC4D0" : "#79747E";
+  const tooltipBg    = dark ? "#211F26" : "#FEF7FF";
+  const tooltipBorder= dark ? "#49454F" : "#CAC4D0";
 
   return (
     <ResponsiveContainer width="100%" height={220}>
@@ -49,7 +49,7 @@ export function UploadTrendChart({
             borderRadius: 8,
             border: `1px solid ${tooltipBorder}`,
             background: tooltipBg,
-            color: dark ? "#c8d8f0" : "#111827",
+            color: dark ? "#E6E0E9" : "#1D1B20",
           }}
           formatter={(v) => typeof v === "number" ? v.toLocaleString() : String(v)}
         />

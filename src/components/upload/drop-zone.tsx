@@ -95,19 +95,19 @@ export function DropZone({ projectId }: { projectId: string }) {
         className={cn(
           "flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-12 cursor-pointer transition-colors",
           dragging
-            ? "border-orange-400 bg-orange-50"
-            : "border-gray-200 bg-gray-50 hover:border-orange-300 hover:bg-orange-50/50"
+            ? "border-md-primary bg-md-primary-container"
+            : "border-md-outline-variant bg-md-surface-container hover:border-md-primary hover:bg-md-primary-container/50"
         )}
       >
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
-          <Upload className="h-6 w-6 text-orange-500" />
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-md-primary-container">
+          <Upload className="h-6 w-6 text-md-primary" />
         </div>
         <div className="text-center">
-          <p className="text-sm font-medium text-gray-900">Drop files here or click to upload</p>
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="text-sm font-medium text-md-on-surface">Drop files here or click to upload</p>
+          <p className="mt-1 text-xs text-md-outline">
             Supports GSC exports, GA4 exports, sitemaps, and spreadsheets
           </p>
-          <p className="mt-1 text-xs text-gray-400">{ACCEPTED.join(", ")}</p>
+          <p className="mt-1 text-xs text-md-outline">{ACCEPTED.join(", ")}</p>
         </div>
         <Button size="sm" variant="outline" onClick={(e) => { e.preventDefault(); inputRef.current?.click(); }}>Browse files</Button>
         <input
@@ -123,23 +123,23 @@ export function DropZone({ projectId }: { projectId: string }) {
       {files.length > 0 && (
         <ul className="space-y-2">
           {files.map((f, i) => (
-            <li key={i} className="flex items-center gap-3 rounded-lg border border-gray-200 bg-white px-4 py-3">
-              <FileSpreadsheet className="h-4 w-4 shrink-0 text-gray-400" />
+            <li key={i} className="flex items-center gap-3 rounded-lg border border-md-outline-variant bg-md-surface-container-low px-4 py-3">
+              <FileSpreadsheet className="h-4 w-4 shrink-0 text-md-outline" />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-900">{f.name}</p>
-                <p className="text-xs text-gray-500">{(f.size / 1024).toFixed(1)} KB</p>
+                <p className="truncate text-sm font-medium text-md-on-surface">{f.name}</p>
+                <p className="text-xs text-md-outline">{(f.size / 1024).toFixed(1)} KB</p>
               </div>
-              {f.status === "uploading" && <Loader2 className="h-4 w-4 animate-spin text-orange-500" />}
-              {f.status === "success" && <CheckCircle2 className="h-4 w-4 text-green-500" />}
+              {f.status === "uploading" && <Loader2 className="h-4 w-4 animate-spin text-md-primary" />}
+              {f.status === "success" && <CheckCircle2 className="h-4 w-4 text-md-success" />}
               {f.status === "error" && (
-                <div className="flex items-center gap-1 text-red-500">
+                <div className="flex items-center gap-1 text-md-error">
                   <AlertCircle className="h-4 w-4" />
                   <span className="text-xs">{f.error}</span>
                 </div>
               )}
               <button
                 onClick={() => setFiles((prev) => prev.filter((_, j) => j !== i))}
-                className="ml-1 text-gray-400 hover:text-gray-600"
+                className="ml-1 text-md-outline hover:text-md-on-surface-variant"
               >
                 <X className="h-4 w-4" />
               </button>

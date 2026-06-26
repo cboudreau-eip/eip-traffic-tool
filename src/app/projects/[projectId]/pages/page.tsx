@@ -108,8 +108,8 @@ export default async function PagesPage({
         className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-24 text-center"
         style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
       >
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
-          <FileSearch className="h-6 w-6 text-orange-500" />
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-md-primary-container">
+          <FileSearch className="h-6 w-6 text-md-primary" />
         </div>
         <h2 className="mt-4 text-lg font-semibold" style={{ color: "var(--clr-primary)" }}>No GSC data yet</h2>
         <p className="mt-2 max-w-sm text-sm" style={{ color: "var(--clr-muted)" }}>
@@ -117,7 +117,7 @@ export default async function PagesPage({
         </p>
         <Link
           href={`/projects/${projectId}/upload`}
-          className="mt-5 inline-flex items-center rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600"
+          className="mt-5 inline-flex items-center rounded-full bg-md-primary px-6 py-2 text-sm font-medium text-md-on-primary hover:opacity-90"
         >
           Upload data
         </Link>
@@ -211,7 +211,7 @@ export default async function PagesPage({
                   Comparing <span className="font-medium" style={{ color: "var(--clr-primary)" }}>{current.filename}</span>{" "}
                   vs <span className="font-medium" style={{ color: "var(--clr-primary)" }}>{previous.filename}</span>
                   {newCount > 0 && (
-                    <span className="ml-2 inline-flex items-center rounded bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">
+                    <span className="ml-2 inline-flex items-center rounded bg-md-success-container px-1.5 py-0.5 text-xs font-medium text-md-on-success-container">
                       {newCount} new
                     </span>
                   )}
@@ -219,7 +219,7 @@ export default async function PagesPage({
               ) : (
                 <>
                   {current.filename} · {format(new Date(current.uploadedAt), "MMM d, yyyy")} ·{" "}
-                  <span className="text-orange-500">Upload again next week to see changes</span>
+                  <span className="text-md-primary">Upload again next week to see changes</span>
                 </>
               )}
             </p>

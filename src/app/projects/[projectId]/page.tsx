@@ -61,8 +61,8 @@ export default async function ProjectDashboard({
           className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-16 text-center"
           style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
-            <Upload className="h-6 w-6 text-orange-500" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-md-primary-container">
+            <Upload className="h-6 w-6 text-md-primary" />
           </div>
           <h2 className="mt-4 text-lg font-semibold" style={{ color: "var(--clr-primary)" }}>No data yet</h2>
           <p className="mt-2 max-w-sm text-sm" style={{ color: "var(--clr-muted)" }}>
@@ -78,14 +78,14 @@ export default async function ProjectDashboard({
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard title="Total Clicks" value={formatNumber(gscTotals._sum.clicks ?? 0)} icon={MousePointerClick} />
-            <StatCard title="Impressions" value={formatNumber(gscTotals._sum.impressions ?? 0)} icon={Eye} iconColor="#3b82f6" iconBg="#eff6ff" />
-            <StatCard title="Avg. CTR" value={formatPercent(gscTotals._avg.ctr ?? 0)} icon={TrendingUp} iconColor="#22c55e" iconBg="#dcfce7" />
-            <StatCard title="Avg. Position" value={(gscTotals._avg.position ?? 0) > 0 ? (gscTotals._avg.position ?? 0).toFixed(1) : "—"} icon={Globe} iconColor="#a855f7" iconBg="#f3e8ff" />
+            <StatCard title="Impressions" value={formatNumber(gscTotals._sum.impressions ?? 0)} icon={Eye} iconColor="var(--md-on-secondary-container)" iconBg="var(--md-secondary-container)" />
+            <StatCard title="Avg. CTR" value={formatPercent(gscTotals._avg.ctr ?? 0)} icon={TrendingUp} iconColor="var(--md-on-success-container)" iconBg="var(--md-success-container)" />
+            <StatCard title="Avg. Position" value={(gscTotals._avg.position ?? 0) > 0 ? (gscTotals._avg.position ?? 0).toFixed(1) : "—"} icon={Globe} iconColor="var(--md-on-primary-container)" iconBg="var(--md-primary-container)" />
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             <StatCard title="Sessions" value={formatNumber(ga4Totals._sum.sessions ?? 0)} icon={Users} />
-            <StatCard title="Users" value={formatNumber(ga4Totals._sum.users ?? 0)} icon={Users} iconColor="#6366f1" iconBg="#eef2ff" />
-            <StatCard title="Page Views" value={formatNumber(ga4Totals._sum.pageViews ?? 0)} icon={Eye} iconColor="#14b8a6" iconBg="#f0fdfa" />
+            <StatCard title="Users" value={formatNumber(ga4Totals._sum.users ?? 0)} icon={Users} iconColor="var(--md-on-tertiary-container)" iconBg="var(--md-tertiary-container)" />
+            <StatCard title="Page Views" value={formatNumber(ga4Totals._sum.pageViews ?? 0)} icon={Eye} iconColor="var(--md-on-secondary-container)" iconBg="var(--md-secondary-container)" />
           </div>
         </>
       )}
@@ -95,7 +95,7 @@ export default async function ProjectDashboard({
           <CardTitle className="text-base">Recent Uploads</CardTitle>
           <Link
             href={`${base}/upload`}
-            className="flex items-center gap-1 text-xs transition-colors hover:text-orange-500"
+            className="flex items-center gap-1 text-xs transition-colors hover:text-md-primary"
             style={{ color: "var(--clr-muted)" }}
           >
             View all <ArrowRight className="h-3 w-3" />

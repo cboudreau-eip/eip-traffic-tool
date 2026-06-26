@@ -14,9 +14,9 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-3 shrink-0">
           <div
             className="flex h-8 w-8 items-center justify-center rounded-full"
-            style={{ background: "var(--clr-primary)" }}
+            style={{ background: "var(--md-primary)", color: "var(--md-on-primary)" }}
           >
-            <Globe className="h-4 w-4 text-white" />
+            <Globe className="h-4 w-4" />
           </div>
           <div>
             <p className="text-sm font-bold leading-tight" style={{ color: "var(--clr-primary)" }}>
@@ -33,25 +33,25 @@ export function Navbar() {
             className="flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium"
             style={{ borderColor: "var(--clr-border)", color: "var(--clr-secondary)" }}
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--md-success)" }} />
             Live
           </div>
 
           <ThemeToggle />
 
           <div
-            className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white"
-            style={{ background: "var(--clr-primary)" }}
+            className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold"
+            style={{ background: "var(--md-primary)", color: "var(--md-on-primary)" }}
           >
             E
           </div>
         </div>
       </div>
 
-      {/* Two-tone accent line */}
+      {/* Two-tone accent line (M3 primary → tertiary) */}
       <div className="flex h-0.5 w-full">
-        <div className="flex-1" style={{ background: "#B22234" }} />
-        <div className="flex-1" style={{ background: "var(--clr-primary)" }} />
+        <div className="flex-1" style={{ background: "var(--md-primary)" }} />
+        <div className="flex-1" style={{ background: "var(--md-tertiary)" }} />
       </div>
     </header>
   );

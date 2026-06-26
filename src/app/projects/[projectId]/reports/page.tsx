@@ -30,15 +30,15 @@ export default async function ReportsPage({ params }: { params: Promise<{ projec
     <div className="space-y-8">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
-          <p className="mt-1 text-sm text-gray-500">Summary report for {project.name}</p>
+          <h1 className="text-2xl font-bold text-md-on-surface">Reports</h1>
+          <p className="mt-1 text-sm text-md-outline">Summary report for {project.name}</p>
         </div>
         <Badge variant="secondary">{uploadCount} files uploaded</Badge>
       </div>
 
       {!hasData && (
-        <div className="rounded-xl border-2 border-dashed border-gray-200 bg-white py-16 text-center">
-          <p className="text-sm text-gray-500">Upload data first to generate reports.</p>
+        <div className="rounded-xl border-2 border-dashed border-md-outline-variant bg-md-surface-container-low py-16 text-center">
+          <p className="text-sm text-md-outline">Upload data first to generate reports.</p>
         </div>
       )}
 
@@ -47,7 +47,7 @@ export default async function ReportsPage({ params }: { params: Promise<{ projec
           {gscTotals._count.id > 0 && (
             <Card>
               <CardHeader className="flex-row items-center gap-2 space-y-0">
-                <Search className="h-4 w-4 text-orange-500" />
+                <Search className="h-4 w-4 text-md-primary" />
                 <CardTitle className="text-base">Search Console Summary</CardTitle>
               </CardHeader>
               <CardContent>
@@ -58,22 +58,22 @@ export default async function ReportsPage({ params }: { params: Promise<{ projec
                     { label: "Avg. CTR", value: formatPercent(gscTotals._avg.ctr ?? 0) },
                     { label: "Avg. Position", value: (gscTotals._avg.position ?? 0).toFixed(1) },
                   ].map((item) => (
-                    <div key={item.label} className="rounded-lg bg-gray-50 p-4">
-                      <p className="text-xs text-gray-500">{item.label}</p>
-                      <p className="mt-1 text-xl font-bold text-gray-900">{item.value}</p>
+                    <div key={item.label} className="rounded-lg bg-md-surface-container p-4">
+                      <p className="text-xs text-md-outline">{item.label}</p>
+                      <p className="mt-1 text-xl font-bold text-md-on-surface">{item.value}</p>
                     </div>
                   ))}
                 </div>
                 {topQueries.length > 0 && (
                   <div className="mt-6">
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Top 10 Queries</p>
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-md-outline">Top 10 Queries</p>
                     <div className="space-y-2">
                       {topQueries.map((q, i) => (
                         <div key={i} className="flex items-center gap-3">
-                          <span className="w-5 shrink-0 text-xs text-gray-400">{i + 1}</span>
-                          <span className="min-w-0 flex-1 truncate text-xs text-gray-700">{q.query}</span>
-                          <span className="text-xs font-medium text-gray-900">{formatNumber(q._sum.clicks ?? 0)} clicks</span>
-                          <span className="text-xs text-gray-400">pos {(q._avg.position ?? 0).toFixed(1)}</span>
+                          <span className="w-5 shrink-0 text-xs text-md-outline">{i + 1}</span>
+                          <span className="min-w-0 flex-1 truncate text-xs text-md-on-surface-variant">{q.query}</span>
+                          <span className="text-xs font-medium text-md-on-surface">{formatNumber(q._sum.clicks ?? 0)} clicks</span>
+                          <span className="text-xs text-md-outline">pos {(q._avg.position ?? 0).toFixed(1)}</span>
                         </div>
                       ))}
                     </div>
@@ -86,7 +86,7 @@ export default async function ReportsPage({ params }: { params: Promise<{ projec
           {ga4Totals._count.id > 0 && (
             <Card>
               <CardHeader className="flex-row items-center gap-2 space-y-0">
-                <TrendingUp className="h-4 w-4 text-green-500" />
+                <TrendingUp className="h-4 w-4 text-md-success" />
                 <CardTitle className="text-base">GA4 Analytics Summary</CardTitle>
               </CardHeader>
               <CardContent>
@@ -97,9 +97,9 @@ export default async function ReportsPage({ params }: { params: Promise<{ projec
                     { label: "Page Views", value: formatNumber(ga4Totals._sum.pageViews ?? 0) },
                     { label: "Conversions", value: formatNumber(ga4Totals._sum.conversions ?? 0) },
                   ].map((item) => (
-                    <div key={item.label} className="rounded-lg bg-gray-50 p-4">
-                      <p className="text-xs text-gray-500">{item.label}</p>
-                      <p className="mt-1 text-xl font-bold text-gray-900">{item.value}</p>
+                    <div key={item.label} className="rounded-lg bg-md-surface-container p-4">
+                      <p className="text-xs text-md-outline">{item.label}</p>
+                      <p className="mt-1 text-xl font-bold text-md-on-surface">{item.value}</p>
                     </div>
                   ))}
                 </div>
@@ -110,13 +110,13 @@ export default async function ReportsPage({ params }: { params: Promise<{ projec
           {sitemapCount > 0 && (
             <Card>
               <CardHeader className="flex-row items-center gap-2 space-y-0">
-                <Globe className="h-4 w-4 text-blue-500" />
+                <Globe className="h-4 w-4 text-md-secondary" />
                 <CardTitle className="text-base">Sitemap Summary</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="rounded-lg bg-gray-50 p-4">
-                  <p className="text-xs text-gray-500">Total Indexed URLs</p>
-                  <p className="mt-1 text-xl font-bold text-gray-900">{sitemapCount.toLocaleString()}</p>
+                <div className="rounded-lg bg-md-surface-container p-4">
+                  <p className="text-xs text-md-outline">Total Indexed URLs</p>
+                  <p className="mt-1 text-xl font-bold text-md-on-surface">{sitemapCount.toLocaleString()}</p>
                 </div>
               </CardContent>
             </Card>

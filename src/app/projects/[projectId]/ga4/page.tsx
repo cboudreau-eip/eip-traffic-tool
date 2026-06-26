@@ -98,8 +98,8 @@ export default async function Ga4Page({ params }: { params: Promise<{ projectId:
                 <UploadTrendChart
                   data={trendData}
                   bars={[
-                    { key: "sessions", name: "Sessions", color: "#f97316" },
-                    { key: "users",    name: "Users",    color: "#6366f1" },
+                    { key: "sessions", name: "Sessions", color: "#6750A4" },
+                    { key: "users",    name: "Users",    color: "#7D5260" },
                   ]}
                 />
               </CardContent>
@@ -132,13 +132,13 @@ export default async function Ga4Page({ params }: { params: Promise<{ projectId:
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard title="Sessions" value={formatNumber(totals._sum.sessions ?? 0)} icon={Users} />
-            <StatCard title="Users" value={formatNumber(totals._sum.users ?? 0)} icon={Users} iconColor="#4f6ef7" iconBg="#eef0fe" />
-            <StatCard title="Page Views" value={formatNumber(totals._sum.pageViews ?? 0)} icon={Eye} iconColor="#22c55e" iconBg="#dcfce7" />
-            <StatCard title="Conversions" value={formatNumber(totals._sum.conversions ?? 0)} icon={MousePointerClick} iconColor="#f97316" iconBg="#ffedd5" />
+            <StatCard title="Users" value={formatNumber(totals._sum.users ?? 0)} icon={Users} iconColor="var(--md-on-secondary-container)" iconBg="var(--md-secondary-container)" />
+            <StatCard title="Page Views" value={formatNumber(totals._sum.pageViews ?? 0)} icon={Eye} iconColor="var(--md-on-success-container)" iconBg="var(--md-success-container)" />
+            <StatCard title="Conversions" value={formatNumber(totals._sum.conversions ?? 0)} icon={MousePointerClick} iconColor="var(--md-on-primary-container)" iconBg="var(--md-primary-container)" />
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <StatCard title="Avg. Session Duration" value={formatDuration(totals._avg.avgSessionDur ?? 0)} icon={Clock} iconColor="#a855f7" iconBg="#f3e8ff" />
-            <StatCard title="Avg. Bounce Rate" value={formatPercent(totals._avg.bounceRate ?? 0)} icon={TrendingUp} iconColor="#ef4444" iconBg="#fee2e2" />
+            <StatCard title="Avg. Session Duration" value={formatDuration(totals._avg.avgSessionDur ?? 0)} icon={Clock} iconColor="var(--md-on-tertiary-container)" iconBg="var(--md-tertiary-container)" />
+            <StatCard title="Avg. Bounce Rate" value={formatPercent(totals._avg.bounceRate ?? 0)} icon={TrendingUp} iconColor="var(--md-on-error-container)" iconBg="var(--md-error-container)" />
           </div>
 
           {bySource.length > 0 && (

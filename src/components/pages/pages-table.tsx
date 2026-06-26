@@ -47,14 +47,14 @@ function pctDelta(current: number, prev: number | null): number | null {
 function DeltaChip({ value, invert = false }: { value: number | null; invert?: boolean }) {
   if (value === null) return <span className="text-xs" style={{ color: "var(--clr-border)" }}>—</span>;
   if (!isFinite(value)) return (
-    <span className="inline-flex items-center rounded bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">new</span>
+    <span className="inline-flex items-center rounded bg-md-success-container px-1.5 py-0.5 text-xs font-medium text-md-on-success-container">new</span>
   );
   const isPositive = invert ? value < 0 : value > 0;
   const abs = Math.abs(value * 100);
   return (
     <span className={cn(
       "inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-xs font-medium",
-      isPositive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+      isPositive ? "bg-md-success-container text-md-on-success-container" : "bg-md-error-container text-md-on-error-container"
     )}>
       {isPositive ? <ArrowUp className="h-2.5 w-2.5" /> : <ArrowDown className="h-2.5 w-2.5" />}
       {abs > 999 ? "999+" : abs.toFixed(0)}%
@@ -107,7 +107,7 @@ function SortableHeader({
     <button
       onClick={() => onSort(sortKey)}
       className="flex items-center gap-1 text-xs font-medium uppercase tracking-wide"
-      style={{ color: active ? "#f97316" : "var(--clr-muted)" }}
+      style={{ color: active ? "var(--md-primary)" : "var(--clr-muted)" }}
     >
       {label}
       {active ? (
@@ -293,7 +293,7 @@ function ExpandableRow({
                   {path}
                 </span>
                 {row.isNew && hasComparison && (
-                  <span className="shrink-0 inline-flex items-center rounded bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">
+                  <span className="shrink-0 inline-flex items-center rounded bg-md-success-container px-1.5 py-0.5 text-xs font-medium text-md-on-success-container">
                     new
                   </span>
                 )}
@@ -304,7 +304,7 @@ function ExpandableRow({
                   className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <ExternalLink className="h-3 w-3 hover:text-orange-500" style={{ color: "var(--clr-muted)" }} />
+                  <ExternalLink className="h-3 w-3 hover:text-md-primary" style={{ color: "var(--clr-muted)" }} />
                 </a>
               </div>
             </div>

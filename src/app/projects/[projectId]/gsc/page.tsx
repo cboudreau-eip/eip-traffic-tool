@@ -52,9 +52,9 @@ export default async function GscPage({ params }: { params: Promise<{ projectId:
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard title="Total Clicks" value={formatNumber(totals._sum.clicks ?? 0)} icon={MousePointerClick} />
-            <StatCard title="Impressions" value={formatNumber(totals._sum.impressions ?? 0)} icon={Eye} iconColor="#3b82f6" iconBg="#eff6ff" />
-            <StatCard title="Avg. CTR" value={formatPercent(totals._avg.ctr ?? 0)} icon={TrendingUp} iconColor="#22c55e" iconBg="#dcfce7" />
-            <StatCard title="Avg. Position" value={(totals._avg.position ?? 0).toFixed(1)} icon={Globe} iconColor="#a855f7" iconBg="#f3e8ff" />
+            <StatCard title="Impressions" value={formatNumber(totals._sum.impressions ?? 0)} icon={Eye} iconColor="var(--md-secondary)" iconBg="var(--md-secondary-container)" />
+            <StatCard title="Avg. CTR" value={formatPercent(totals._avg.ctr ?? 0)} icon={TrendingUp} iconColor="var(--md-success)" iconBg="var(--md-success-container)" />
+            <StatCard title="Avg. Position" value={(totals._avg.position ?? 0).toFixed(1)} icon={Globe} iconColor="var(--md-tertiary)" iconBg="var(--md-tertiary-container)" />
           </div>
 
           {trendData.length > 1 && (
@@ -69,8 +69,8 @@ export default async function GscPage({ params }: { params: Promise<{ projectId:
                 <UploadTrendChart
                   data={trendData}
                   bars={[
-                    { key: "clicks",      name: "Clicks",      color: "#1a4480" },
-                    { key: "impressions", name: "Impressions",  color: "#C9A961" },
+                    { key: "clicks",      name: "Clicks",      color: "var(--md-primary)" },
+                    { key: "impressions", name: "Impressions",  color: "var(--md-tertiary)" },
                   ]}
                 />
               </CardContent>

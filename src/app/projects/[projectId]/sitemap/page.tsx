@@ -37,8 +37,8 @@ export default async function SitemapPage({ params }: { params: Promise<{ projec
         <>
           <div className="grid gap-4 sm:grid-cols-3">
             <StatCard title="Total URLs" value={count.toLocaleString()} icon={Globe} />
-            <StatCard title="With Last Modified" value={withLastmod.toLocaleString()} icon={Calendar} iconColor="#3b82f6" iconBg="#eff6ff" />
-            <StatCard title="Change Frequencies" value={byChangefreq.length.toString()} icon={Link2} iconColor="#22c55e" iconBg="#dcfce7" />
+            <StatCard title="With Last Modified" value={withLastmod.toLocaleString()} icon={Calendar} iconColor="var(--md-secondary)" iconBg="var(--md-secondary-container)" />
+            <StatCard title="Change Frequencies" value={byChangefreq.length.toString()} icon={Link2} iconColor="var(--md-success)" iconBg="var(--md-success-container)" />
           </div>
 
           {byChangefreq.length > 0 && (
@@ -79,7 +79,7 @@ export default async function SitemapPage({ params }: { params: Promise<{ projec
                   <tbody>
                     {urls.map((u) => (
                       <tr key={u.id} className="row-hover transition-colors" style={{ borderBottom: "1px solid var(--clr-border-2)" }}>
-                        <td className="max-w-sm truncate px-4 py-2.5 text-xs text-blue-500 hover:underline">
+                        <td className="max-w-sm truncate px-4 py-2.5 text-xs text-md-secondary hover:underline">
                           <a href={u.loc} target="_blank" rel="noopener noreferrer">{u.loc}</a>
                         </td>
                         <td className="px-4 py-2.5 text-right text-xs" style={{ color: "var(--clr-muted)" }}>{u.lastmod ?? "—"}</td>

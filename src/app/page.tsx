@@ -30,8 +30,8 @@ export default async function HomePage() {
           className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-20 text-center"
           style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
-            <Globe className="h-6 w-6 text-orange-500" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-md-primary-container">
+            <Globe className="h-6 w-6 text-md-primary" />
           </div>
           <h2 className="mt-4 text-lg font-semibold" style={{ color: "var(--clr-primary)" }}>No projects yet</h2>
           <p className="mt-2 max-w-sm text-sm" style={{ color: "var(--clr-muted)" }}>
@@ -48,10 +48,10 @@ export default async function HomePage() {
               <Card className="group h-full transition-shadow hover:shadow-md">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-50">
-                      <Globe className="h-5 w-5 text-orange-500" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-md-primary-container">
+                      <Globe className="h-5 w-5 text-md-primary" />
                     </div>
-                    <ArrowRight className="h-4 w-4 transition-colors group-hover:text-orange-500" style={{ color: "var(--clr-border)" }} />
+                    <ArrowRight className="h-4 w-4 transition-colors group-hover:text-md-primary" style={{ color: "var(--clr-border)" }} />
                   </div>
                   <div className="mt-4">
                     <h3 className="font-semibold" style={{ color: "var(--clr-primary)" }}>{p.name}</h3>

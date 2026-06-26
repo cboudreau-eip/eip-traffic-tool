@@ -39,18 +39,18 @@ const COLUMNS: Column[] = [
 ];
 
 const SOURCE_COLORS: Record<string, string> = {
-  gsc: "#1a4480",
-  ga4: "#f97316",
+  gsc: "var(--md-primary)",
+  ga4: "var(--md-tertiary)",
 };
 
 const PAGE_SIZE = 25;
 
 function CoverageChip({ hasGsc, hasGa4 }: { hasGsc: boolean; hasGa4: boolean }) {
   if (hasGsc && hasGa4)
-    return <span className="inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium bg-green-100 text-green-700">Both</span>;
+    return <span className="inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium bg-md-success-container text-md-on-success-container">Both</span>;
   if (hasGsc)
-    return <span className="inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-700">GSC</span>;
-  return <span className="inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium bg-orange-100 text-orange-700">GA4</span>;
+    return <span className="inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium bg-md-secondary-container text-md-on-secondary-container">GSC</span>;
+  return <span className="inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium bg-md-primary-container text-md-on-primary-container">GA4</span>;
 }
 
 export function CrossRefTable({ rows }: { rows: CrossRefRow[] }) {
@@ -116,9 +116,9 @@ export function CrossRefTable({ rows }: { rows: CrossRefRow[] }) {
         {(
           [
             { key: "all",      label: `All (${rows.length})` },
-            { key: "both",     label: `Both (${bothCount})`,     color: "bg-green-100 text-green-700"  },
-            { key: "gsc_only", label: `GSC only (${gscCount})`,  color: "bg-blue-100 text-blue-700"    },
-            { key: "ga4_only", label: `GA4 only (${ga4Count})`,  color: "bg-orange-100 text-orange-700"},
+            { key: "both",     label: `Both (${bothCount})`,     color: "bg-md-success-container text-md-on-success-container"  },
+            { key: "gsc_only", label: `GSC only (${gscCount})`,  color: "bg-md-secondary-container text-md-on-secondary-container"    },
+            { key: "ga4_only", label: `GA4 only (${ga4Count})`,  color: "bg-md-primary-container text-md-on-primary-container"},
           ] as Array<{ key: Coverage; label: string; color?: string }>
         ).map((opt) => (
           <button
@@ -313,10 +313,10 @@ export function CrossRefTable({ rows }: { rows: CrossRefRow[] }) {
       {/* Legend */}
       <div className="flex items-center gap-4 text-xs" style={{ color: "var(--clr-muted)" }}>
         <span className="flex items-center gap-1.5">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#1a4480]" /> GSC = Search Console data
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-md-primary" /> GSC = Search Console data
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#f97316]" /> GA4 = Analytics data
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-md-tertiary" /> GA4 = Analytics data
         </span>
       </div>
     </div>

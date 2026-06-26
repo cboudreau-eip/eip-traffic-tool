@@ -17,8 +17,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: `try{if(localStorage.getItem('theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}`,
           }}
         />
+        {/* Roboto — Material Design 3 type family */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+          rel="stylesheet"
+        />
       </head>
-      <body className="min-h-screen" style={{ background: "var(--clr-bg)" }}>
+      <body className="min-h-screen" style={{ background: "var(--md-surface)" }}>
         <Navbar />
         <main className="mx-auto max-w-screen-2xl px-6 py-8">{children}</main>
       </body>

@@ -1,45 +1,117 @@
 @import "tailwindcss";
 @custom-variant dark (&:is(.dark *));
 
-/* ── Light mode tokens ── */
-:root {
-  --clr-bg:          #faf9f5;
-  --clr-surface:     #ffffff;
-  --clr-surface-2:   #f0f4fa;
-  --clr-surface-3:   #faf9f5;
-  --clr-border:      #e8edf5;
-  --clr-border-2:    #eef1f6;
-  --clr-primary:     #0f2f61;
-  --clr-primary-mid: #1a4480;
-  --clr-secondary:   #5d6a80;
-  --clr-muted:       #8a96aa;
-  --clr-gold:        #C9A961;
-  --clr-gold-dark:   #b08a3a;
+/* ═══════════════════════════════════════════════════════════════
+   Material Design 3 (Material You) — color, shape & elevation system
+   Tonal palette built on the M3 baseline (primary = #6750A4).
+   Legacy --clr-* aliases are mapped onto M3 roles so existing
+   inline-styled components stay coherent.
+   ═══════════════════════════════════════════════════════════════ */
 
-  /* Legacy aliases kept for shadcn/ui card compatibility */
+/* ── Light scheme ── */
+:root {
+  /* Primary */
+  --md-primary:              #6750A4;
+  --md-on-primary:           #FFFFFF;
+  --md-primary-container:    #EADDFF;
+  --md-on-primary-container: #21005D;
+
+  /* Secondary */
+  --md-secondary:            #625B71;
+  --md-secondary-container:  #E8DEF8;
+  --md-on-secondary-container:#1D192B;
+
+  /* Tertiary (accent) */
+  --md-tertiary:             #7D5260;
+  --md-tertiary-container:   #FFD8E4;
+  --md-on-tertiary-container:#31111D;
+
+  /* Error */
+  --md-error:                #B3261E;
+  --md-on-error:             #FFFFFF;
+  --md-error-container:      #F9DEDC;
+  --md-on-error-container:   #410E0B;
+
+  /* Success (not in M3 baseline; tonal green for positive deltas) */
+  --md-success:              #146C2E;
+  --md-success-container:    #C5EFCB;
+  --md-on-success-container: #002107;
+
+  /* Neutral surfaces (tonal elevation) */
+  --md-surface:              #FEF7FF;
+  --md-surface-dim:          #DED8E1;
+  --md-surface-bright:       #FEF7FF;
+  --md-surface-container-low:#F7F2FA;
+  --md-surface-container:    #F3EDF7;
+  --md-surface-container-high:#ECE6F0;
+  --md-surface-variant:      #E7E0EC;
+  --md-on-surface:           #1D1B20;
+  --md-on-surface-variant:   #49454F;
+  --md-outline:              #79747E;
+  --md-outline-variant:      #CAC4D0;
+
+  /* M3 shape scale */
+  --md-shape-xs: 4px;
+  --md-shape-sm: 8px;
+  --md-shape-md: 12px;
+  --md-shape-lg: 16px;
+  --md-shape-xl: 28px;
+
+  /* ── Legacy aliases (mapped onto M3 roles) ── */
+  --clr-bg:          var(--md-surface);
+  --clr-surface:     var(--md-surface-container-low);
+  --clr-surface-2:   var(--md-surface-container);
+  --clr-surface-3:   var(--md-surface);
+  --clr-border:      var(--md-outline-variant);
+  --clr-border-2:    var(--md-surface-variant);
+  --clr-primary:     var(--md-on-surface);
+  --clr-primary-mid: var(--md-primary);
+  --clr-secondary:   var(--md-on-surface-variant);
+  --clr-muted:       var(--md-outline);
+  --clr-gold:        var(--md-tertiary);
+  --clr-gold-dark:   var(--md-on-tertiary-container);
+
   --background: var(--clr-bg);
   --foreground: var(--clr-primary);
-  --brand-navy: #0f2f61;
-  --brand-gold: #C9A961;
+  --brand-navy: var(--md-primary);
+  --brand-gold: var(--md-tertiary);
 }
 
-/* ── Dark mode tokens ── */
+/* ── Dark scheme ── */
 .dark {
-  --clr-bg:          #0d1520;
-  --clr-surface:     #111d2e;
-  --clr-surface-2:   #162032;
-  --clr-surface-3:   #0d1520;
-  --clr-border:      #1e3048;
-  --clr-border-2:    #1a2a40;
-  --clr-primary:     #c8d8f0;
-  --clr-primary-mid: #7fa8d8;
-  --clr-secondary:   #8fa3c0;
-  --clr-muted:       #5d7494;
-  --clr-gold:        #C9A961;
-  --clr-gold-dark:   #d4b870;
+  --md-primary:              #D0BCFF;
+  --md-on-primary:           #381E72;
+  --md-primary-container:    #4F378B;
+  --md-on-primary-container: #EADDFF;
 
-  --background: var(--clr-bg);
-  --foreground: var(--clr-primary);
+  --md-secondary:            #CCC2DC;
+  --md-secondary-container:  #4A4458;
+  --md-on-secondary-container:#E8DEF8;
+
+  --md-tertiary:             #EFB8C8;
+  --md-tertiary-container:   #633B48;
+  --md-on-tertiary-container:#FFD8E4;
+
+  --md-error:                #F2B8B5;
+  --md-on-error:             #601410;
+  --md-error-container:      #8C1D18;
+  --md-on-error-container:   #F9DEDC;
+
+  --md-success:              #7CD992;
+  --md-success-container:    #1F4C2A;
+  --md-on-success-container: #C5EFCB;
+
+  --md-surface:              #141218;
+  --md-surface-dim:          #141218;
+  --md-surface-bright:       #3B383E;
+  --md-surface-container-low:#1D1B20;
+  --md-surface-container:    #211F26;
+  --md-surface-container-high:#2B2930;
+  --md-surface-variant:      #49454F;
+  --md-on-surface:           #E6E0E9;
+  --md-on-surface-variant:   #CAC4D0;
+  --md-outline:              #938F99;
+  --md-outline-variant:      #49454F;
 
   color-scheme: dark;
 }
@@ -47,12 +119,40 @@
 @theme inline {
   --color-background: var(--clr-bg);
   --color-foreground: var(--clr-primary);
+
+  /* Expose M3 roles to Tailwind utilities (bg-md-primary, text-md-on-surface, …) */
+  --color-md-primary:               var(--md-primary);
+  --color-md-on-primary:            var(--md-on-primary);
+  --color-md-primary-container:     var(--md-primary-container);
+  --color-md-on-primary-container:  var(--md-on-primary-container);
+  --color-md-secondary:             var(--md-secondary);
+  --color-md-secondary-container:   var(--md-secondary-container);
+  --color-md-on-secondary-container:var(--md-on-secondary-container);
+  --color-md-tertiary:              var(--md-tertiary);
+  --color-md-tertiary-container:    var(--md-tertiary-container);
+  --color-md-on-tertiary-container: var(--md-on-tertiary-container);
+  --color-md-error:                 var(--md-error);
+  --color-md-on-error:              var(--md-on-error);
+  --color-md-error-container:       var(--md-error-container);
+  --color-md-on-error-container:    var(--md-on-error-container);
+  --color-md-success:               var(--md-success);
+  --color-md-success-container:     var(--md-success-container);
+  --color-md-on-success-container:  var(--md-on-success-container);
+  --color-md-surface:               var(--md-surface);
+  --color-md-surface-container-low: var(--md-surface-container-low);
+  --color-md-surface-container:     var(--md-surface-container);
+  --color-md-surface-container-high:var(--md-surface-container-high);
+  --color-md-surface-variant:       var(--md-surface-variant);
+  --color-md-on-surface:            var(--md-on-surface);
+  --color-md-on-surface-variant:    var(--md-on-surface-variant);
+  --color-md-outline:               var(--md-outline);
+  --color-md-outline-variant:       var(--md-outline-variant);
 }
 
 body {
-  background: var(--clr-bg);
-  color: var(--clr-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  font-family: "Roboto", "Roboto Flex", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -60,5 +160,20 @@ body {
   box-sizing: border-box;
 }
 
-.row-hover { transition: background 0.1s; }
-.row-hover:hover { background: var(--clr-surface-2); }
+/* ── M3 elevation (tonal + shadow) ── */
+.md-elevation-1 { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 1px rgba(0,0,0,0.15); }
+.md-elevation-2 { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.30), 0 2px 6px 2px rgba(0,0,0,0.15); }
+.md-elevation-3 { box-shadow: 0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px 0 rgba(0,0,0,0.30); }
+
+/* ── State layers (M3 hover/focus overlays) ── */
+.md-state-primary { position: relative; }
+.md-state-primary::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: currentColor; opacity: 0; transition: opacity 0.15s; pointer-events: none;
+}
+.md-state-primary:hover::after { opacity: 0.08; }
+.md-state-primary:focus-visible::after { opacity: 0.12; }
+
+/* Table row hover → M3 surface-container state */
+.row-hover { transition: background 0.12s; }
+.row-hover:hover { background: var(--md-surface-container-high); }

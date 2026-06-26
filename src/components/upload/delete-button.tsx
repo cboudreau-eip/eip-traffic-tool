@@ -19,7 +19,7 @@ export function DeleteUploadButton({ id }: { id: string }) {
   return (
     <button
       onClick={handleDelete}
-      className="ml-1 rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+      className="ml-1 rounded p-1 text-md-outline hover:bg-md-error-container hover:text-md-error transition-colors"
       title="Delete upload"
     >
       <Trash2 className="h-4 w-4" />

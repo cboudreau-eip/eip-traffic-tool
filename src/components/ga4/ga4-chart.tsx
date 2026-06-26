@@ -27,22 +27,25 @@ export function Ga4Chart({ data }: { data: Ga4ChartData[] }) {
     date: d.date ? d.date.substring(5) : d.date,
   }));
 
-  const gridColor    = dark ? "#1a2a40" : "#f0f0f0";
-  const tickColor    = dark ? "#5d7494" : "#9ca3af";
-  const tooltipBg    = dark ? "#111d2e" : "#ffffff";
-  const tooltipBorder= dark ? "#1e3048" : "#e5e7eb";
+  // Material 3 palette — primary (sessions) & tertiary (users)
+  const primary      = dark ? "#D0BCFF" : "#6750A4";
+  const tertiary     = dark ? "#EFB8C8" : "#7D5260";
+  const gridColor    = dark ? "#49454F" : "#E7E0EC";
+  const tickColor    = dark ? "#CAC4D0" : "#79747E";
+  const tooltipBg    = dark ? "#211F26" : "#FEF7FF";
+  const tooltipBorder= dark ? "#49454F" : "#CAC4D0";
 
   return (
     <ResponsiveContainer width="100%" height={280}>
       <AreaChart data={formatted} margin={{ top: 4, right: 16, bottom: 0, left: 0 }}>
         <defs>
           <linearGradient id="ga4sessions" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#f97316" stopOpacity={dark ? 0.25 : 0.15} />
-            <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
+            <stop offset="5%" stopColor={primary} stopOpacity={dark ? 0.25 : 0.15} />
+            <stop offset="95%" stopColor={primary} stopOpacity={0} />
           </linearGradient>
           <linearGradient id="ga4users" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#6366f1" stopOpacity={dark ? 0.25 : 0.15} />
-            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+            <stop offset="5%" stopColor={tertiary} stopOpacity={dark ? 0.25 : 0.15} />
+            <stop offset="95%" stopColor={tertiary} stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
@@ -54,13 +57,13 @@ export function Ga4Chart({ data }: { data: Ga4ChartData[] }) {
             borderRadius: 8,
             border: `1px solid ${tooltipBorder}`,
             background: tooltipBg,
-            color: dark ? "#c8d8f0" : "#111827",
+            color: dark ? "#E6E0E9" : "#1D1B20",
           }}
           formatter={(v) => typeof v === "number" ? v.toLocaleString() : String(v)}
         />
         <Legend iconSize={10} wrapperStyle={{ fontSize: 12, color: tickColor }} />
-        <Area type="monotone" dataKey="sessions" name="Sessions" stroke="#f97316" strokeWidth={2} fill="url(#ga4sessions)" />
-        <Area type="monotone" dataKey="users" name="Users" stroke="#6366f1" strokeWidth={2} fill="url(#ga4users)" />
+        <Area type="monotone" dataKey="sessions" name="Sessions" stroke={primary} strokeWidth={2} fill="url(#ga4sessions)" />
+        <Area type="monotone" dataKey="users" name="Users" stroke={tertiary} strokeWidth={2} fill="url(#ga4users)" />
       </AreaChart>
     </ResponsiveContainer>
   );

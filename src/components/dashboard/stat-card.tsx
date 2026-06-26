@@ -20,13 +20,13 @@ export function StatCard({
   changeLabel,
   positive,
   icon: Icon,
-  iconColor = "#C9A961",
-  iconBg = "#faf0d0",
+  iconColor = "var(--md-on-primary-container)",
+  iconBg = "var(--md-primary-container)",
 }: StatCardProps) {
   return (
     <div
-      className="rounded-xl border"
-      style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
+      className="md-elevation-1 rounded-xl"
+      style={{ background: "var(--md-surface-container-low)" }}
     >
       <CardContent className="p-5">
         <div className="flex items-start justify-between">
@@ -44,10 +44,10 @@ export function StatCard({
               <div className="flex items-center gap-1.5">
                 <span
                   className={cn(
-                    "inline-flex items-center rounded px-1.5 py-0.5 text-xs font-semibold",
+                    "inline-flex items-center rounded-lg px-1.5 py-0.5 text-xs font-semibold",
                     positive
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-600"
+                      ? "bg-md-success-container text-md-on-success-container"
+                      : "bg-md-error-container text-md-on-error-container"
                   )}
                 >
                   {positive ? "↑" : "↓"} {change}

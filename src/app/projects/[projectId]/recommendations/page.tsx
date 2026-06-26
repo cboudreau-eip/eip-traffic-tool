@@ -17,9 +17,9 @@ import { RegenerateButton } from "@/components/recommendations/regenerate-button
 export const dynamic = "force-dynamic";
 
 const PRIORITY_STYLES = {
-  high: "border-l-red-500",
-  medium: "border-l-orange-400",
-  low: "border-l-yellow-400",
+  high: "border-l-md-error",
+  medium: "border-l-md-primary",
+  low: "border-l-md-tertiary",
 };
 
 const PRIORITY_LABELS = {
@@ -62,8 +62,8 @@ function RecommendationCard({ rec }: { rec: Recommendation }) {
             <h3 className="text-sm font-semibold" style={{ color: "var(--clr-primary)" }}>{rec.title}</h3>
             <p className="mt-1 text-xs leading-relaxed" style={{ color: "var(--clr-muted)" }}>{rec.description}</p>
             <div className="mt-2 flex items-start gap-1.5">
-              <ArrowUp className="mt-0.5 h-3 w-3 shrink-0 text-orange-500" />
-              <p className="text-xs font-medium text-orange-600">{rec.action}</p>
+              <ArrowUp className="mt-0.5 h-3 w-3 shrink-0 text-md-primary" />
+              <p className="text-xs font-medium text-md-primary">{rec.action}</p>
             </div>
           </div>
         </div>
@@ -177,7 +177,7 @@ export default async function RecommendationsPage({
       <div className="flex items-center justify-between">
         {totalRecs > 0 && (
           <p className="text-sm" style={{ color: "var(--clr-secondary)" }}>
-            <span className="font-bold text-orange-500">+{formatNumber(totalEstimatedGain)}</span>
+            <span className="font-bold text-md-primary">+{formatNumber(totalEstimatedGain)}</span>
             {" "}estimated clicks available
           </p>
         )}
@@ -191,8 +191,8 @@ export default async function RecommendationsPage({
           className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-20 text-center"
           style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
-            <Lightbulb className="h-6 w-6 text-orange-500" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-md-primary-container">
+            <Lightbulb className="h-6 w-6 text-md-primary" />
           </div>
           <h2 className="mt-4 text-lg font-semibold" style={{ color: "var(--clr-primary)" }}>No data yet</h2>
           <p className="mt-2 max-w-sm text-sm" style={{ color: "var(--clr-muted)" }}>
@@ -202,9 +202,9 @@ export default async function RecommendationsPage({
       )}
 
       {gscMissingQuery && !hasGa4Data && (
-        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-orange-200 bg-orange-50 py-16 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
-            <AlertCircle className="h-6 w-6 text-orange-500" />
+        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-md-primary bg-md-primary-container py-16 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-md-primary-container">
+            <AlertCircle className="h-6 w-6 text-md-primary" />
           </div>
           <h2 className="mt-4 text-base font-semibold" style={{ color: "var(--clr-primary)" }}>GSC data found, but no query column</h2>
           <p className="mt-2 max-w-md text-sm" style={{ color: "var(--clr-muted)" }}>
@@ -221,8 +221,8 @@ export default async function RecommendationsPage({
           className="flex flex-col items-center justify-center rounded-xl border py-16 text-center"
           style={{ borderColor: "var(--clr-border)", background: "var(--clr-surface)" }}
         >
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-            <AlertCircle className="h-6 w-6 text-green-500" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-md-success-container">
+            <AlertCircle className="h-6 w-6 text-md-success" />
           </div>
           <h2 className="mt-4 text-base font-semibold" style={{ color: "var(--clr-primary)" }}>No major issues found</h2>
           <p className="mt-2 max-w-sm text-sm" style={{ color: "var(--clr-muted)" }}>
@@ -235,12 +235,12 @@ export default async function RecommendationsPage({
         <>
           <div className="grid gap-4 sm:grid-cols-3">
             {[
-              { label: "Page 2 Trap", count: page2Recs.length, gain: page2Recs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-purple-600" },
-              { label: "Low CTR Opportunities", count: lowCtrRecs.length, gain: lowCtrRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-orange-600" },
-              { label: "Visibility Gaps", count: highCtrRecs.length, gain: highCtrRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-blue-600" },
-              { label: "High Bounce Pages", count: highBounceRecs.length, gain: highBounceRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-red-600" },
-              { label: "Low Conversion Pages", count: lowConvRecs.length, gain: lowConvRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-yellow-600" },
-              { label: "Declining Pages", count: decliningRecs.length, gain: decliningRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-gray-600" },
+              { label: "Page 2 Trap", count: page2Recs.length, gain: page2Recs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-md-tertiary" },
+              { label: "Low CTR Opportunities", count: lowCtrRecs.length, gain: lowCtrRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-md-primary" },
+              { label: "Visibility Gaps", count: highCtrRecs.length, gain: highCtrRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-md-secondary" },
+              { label: "High Bounce Pages", count: highBounceRecs.length, gain: highBounceRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-md-on-error-container" },
+              { label: "Low Conversion Pages", count: lowConvRecs.length, gain: lowConvRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-md-tertiary" },
+              { label: "Declining Pages", count: decliningRecs.length, gain: decliningRecs.reduce((s, r) => s + r.metrics.estimatedGain, 0), color: "text-md-on-surface-variant" },
             ].map((item) => (
               <Card key={item.label}>
                 <CardContent className="p-4">
